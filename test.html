@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>배드민턴 동호회 스마트 매칭 현황판</title>
+  <style>
+    :root {
+      --bg-color: #f4f6f8;
+      --card-bg: #ffffff;
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --text-main: #1f2937;
+      --text-sub: #6b7280;
+      
+      /* 급수 색상 */
+      --grade-a: #ef4444;
+      --grade-b: #3b82f6;
+      --grade-c: #10b981;
+      --grade-d: #f59e0b;
+      --grade-e: #8b5cf6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', system-ui, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); padding: 16px; max-width: 800px; margin: 0 auto; }
+
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #e5e7eb; }
+    h1 { font-size: 1.3rem; font-weight: 700; }
+
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .live-badge { font-size: 0.85rem; color: var(--primary); font-weight: bold; }
+    .btn-reset { padding: 6px 12px; background: var(--danger); color: white; border: none; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+    .btn-reset:hover { background: var(--danger-hover); }
+
+    .summary-bar { display: flex; justify-content: space-around; font-size: 0.85rem; color: var(--text-sub); background: var(--card-bg); padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .summary-bar b { color: var(--text-main); }
+
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .section-title { font-size: 1.05rem; font-weight: 700; }
+
+    /* 코트 영역 */
+    .court-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .court-card { background: var(--card-bg); border-radius: 12px; padding: 16px; border: 2px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .court-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; color: var(--primary); }
+    
+    .court-slots { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; background: #f9fafb; padding: 10px; border-radius: 8px; }
+    .team-box { display: flex; flex-direction: column; gap: 8px; }
+    
+    .slot { 
+      min-height: 42px; background: #fff; border: 1.5px dashed #cbd5e1; border-radius: 6px; 
+      display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #94a3b8;
+      cursor: pointer; transition: all 0.2s; padding: 4px;
+    }
+    .slot.occupied { border-style: solid; border-color: #cbd5e1; color: var(--text-main); font-weight: 600; justify-content: space-between; padding: 0 8px; }
+    .vs { font-weight: 800; color: #9ca3af; font-size: 0.85rem; text-align: center; }
+
+    .btn-finish { width: 100%; margin-top: 10px; padding: 8px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .btn-finish:hover { background: var(--primary-hover); }
+
+    /* 회원 명단 영역 */
+    .add-member-form { display: flex; gap: 6px; margin-bottom: 12px; }
+    .add-member-form input, .add-member-form select { padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; }
+    .add-member-form input[type="text"] { flex: 1; }
+    .btn-add { padding: 8px 12px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+    .member-list { display: flex; flex-direction: column; gap: 8px; }
+    .member-card { background: var(--card-bg); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: grab; user-select: none; }
+    .member-card.selected-member { border: 2px solid var(--primary); background-color: #ecfdf5; }
+    .member-card.off { opacity: 0.4; cursor: not-allowed; }
+    .member-card.rest { background: #fffbebfb; }
+
+    .member-info { display: flex; align-items: center; gap: 8px; }
+    .name { font-weight: 700; font-size: 0.95rem; }
+    .gender { font-size: 0.75rem; color: #6b7280; }
+
+    /* 급수 배지 */
+    .badge { padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; color: white; }
+    .grade-A { background-color: var(--grade-a); }
+    .grade-B { background-color: var(--grade-b); }
+    .grade-C { background-color: var(--grade-c); }
+    .grade-D { background-color: var(--grade-d); }
+    .grade-E { background-color: var(--grade-e); }
+
+    /* 게임 수 조절 영역 */
+    .game-cnt-box { display: flex; align-items: center; gap: 4px; background: #f1f5f9; padding: 2px 6px; border-radius: 6px; }
+    .btn-cnt { border: none; background: #e2e8f0; width: 20px; height: 20px; border-radius: 4px; font-weight: bold; cursor: pointer; line-height: 1; }
+    .cnt-num { font-size: 0.8rem; font-weight: 700; color: #334155; min-width: 32px; text-align: center; }
+
+    /* 상태 조절 토글 버튼 및 삭제 버튼 */
+    .status-group { display: flex; gap: 2px; background: #f1f5f9; padding: 2px; border-radius: 6px; }
+    .status-btn { border: none; padding: 4px 8px; font-size: 0.7rem; font-weight: 600; border-radius: 4px; cursor: pointer; background: transparent; color: var(--text-sub); }
+    .status-btn.active-play { background-color: var(--primary); color: white; }
+    .status-btn.active-rest { background-color: #f59e0b; color: white; }
+    .status-btn.active-off { background-color: #6b7280; color: white; }
+    .btn-delete-member { border: none; background: transparent; color: #ef4444; font-weight: bold; cursor: pointer; font-size: 0.85rem; padding: 0 4px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🏸 민턴 매칭 현황판</h1>
+    <div class="header-actions">
+      <span class="live-badge">● LIVE</span>
+      <button class="btn-reset" onclick="resetData()">🧹 전체 초기화</button>
+    </div>
+  </header>
+
+  <div class="summary-bar">
+    <div>전체 <b id="cnt-total">0</b>명</div> |
+    <div>참여 <b id="cnt-play">0</b>명</div> |
+    <div>휴식 <b id="cnt-rest">0</b>명</div> |
+    <div>퇴근 <b id="cnt-off">0</b>명</div>
+  </div>
+
+  <!-- 진행 중인 코트 영역 -->
+  <div class="section-title">🏟️ 코트 진행 현황</div>
+  <div style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 8px;">* 사람을 선택한 후 빈 코트 슬롯을 클릭하거나, 드래그하여 배치하세요.</div>
+  
+  <div class="court-grid">
+    <!-- 코트 1 -->
+    <div class="court-card">
+      <div class="court-header">
+        <span>1 코트</span>
+        <span style="font-size:0.75rem; color:#6b7280;">진행 중</span>
+      </div>
+      <div class="court-slots">
+        <div class="team-box">
+          <div class="slot" onclick="assignToSlot(1, 0)" ondrop="handleDrop(event, 1, 0)" ondragover="allowDrop(event)" id="slot-1-0">빈 슬롯</div>
+          <div class="slot" onclick="assignToSlot(1, 1)" ondrop="handleDrop(event, 1, 1)" ondragover="allowDrop(event)" id="slot-1-1">빈 슬롯</div>
+        </div>
+        <div class="vs">VS</div>
+        <div class="team-box">
+          <div class="slot" onclick="assignToSlot(1, 2)" ondrop="handleDrop(event, 1, 2)" ondragover="allowDrop(event)" id="slot-1-2">빈 슬롯</div>
+          <div class="slot" onclick="assignToSlot(1, 3)" ondrop="handleDrop(event, 1, 3)" ondragover="allowDrop(event)" id="slot-1-3">빈 슬롯</div>
+        </div>
+      </div>
+      <button class="btn-finish" onclick="finishGame(1)">게임 완료 및 +1게임 적용</button>
+    </div>
+
+    <!-- 코트 2 -->
+    <div class="court-card">
+      <div class="court-header">
+        <span>2 코트</span>
+        <span style="font-size:0.75rem; color:#6b7280;">진행 중</span>
+      </div>
+      <div class="court-slots">
+        <div class="team-box">
+          <div class="slot" onclick="assignToSlot(2, 0)" ondrop="handleDrop(event, 2, 0)" ondragover="allowDrop(event)" id="slot-2-0">빈 슬롯</div>
+          <div class="slot" onclick="assignToSlot(2, 1)" ondrop="handleDrop(event, 2, 1)" ondragover="allowDrop(event)" id="slot-2-1">빈 슬롯</div>
+        </div>
+        <div class="vs">VS</div>
+        <div class="team-box">
+          <div class="slot" onclick="assignToSlot(2, 2)" ondrop="handleDrop(event, 2, 2)" ondragover="allowDrop(event)" id="slot-2-2">빈 슬롯</div>
+          <div class="slot" onclick="assignToSlot(2, 3)" ondrop="handleDrop(event, 2, 3)" ondragover="allowDrop(event)" id="slot-2-3">빈 슬롯</div>
+        </div>
+      </div>
+      <button class="btn-finish" onclick="finishGame(2)">게임 완료 및 +1게임 적용</button>
+    </div>
+  </div>
+
+  <!-- 회원 추가 폼 -->
+  <div class="section-header">
+    <div class="section-title">👥 출석 명단 및 상태 관리</div>
+  </div>
+
+  <form class="add-member-form" onsubmit="addMember(event)">
+    <input type="text" id="new-name" placeholder="이름 입력" required>
+    <select id="new-gender">
+      <option value="남">남</option>
+      <option value="여">여</option>
+    </select>
+    <select id="new-grade">
+      <option value="A">A급</option>
+      <option value="B">B급</option>
+      <option value="C" selected>C급</option>
+      <option value="D">D급</option>
+      <option value="E">E급</option>
+    </select>
+    <button type="submit" class="btn-add">+ 추가</button>
+  </form>
+
+  <!-- 회원 목록 -->
+  <div class="member-list" id="member-list"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script>
+    // Firebase 초기화
+    const firebaseConfig = {
+      apiKey: "AIzaSyCj1JIxyp6ja9GjIMUsNeT9TLs3T_szl2c",
+      authDomain: "highclear-gorhd.firebaseapp.com",
+      databaseURL: "https://highclear-gorhd-default-rtdb.firebaseio.com",
+      projectId: "highclear-gorhd",
+      storageBucket: "highclear-gorhd.firebasestorage.app",
+      messagingSenderId: "987740419286",
+      appId: "1:987740419286:web:22e550ed8eb65d38c40577",
+      measurementId: "G-8DF21PEE0Q"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // 상태 관리 (코트에는 회원 ID만 저장하여 단일 소스 원칙 유지)
+    let members = [];
+    let courtState = {
+      1: [null, null, null, null],
+      2: [null, null, null, null]
+    };
+
+    let selectedMemberId = null; // 선택된 회원 ID
+
+    // Firebase 데이터 동기화 함수 (전송)
+    function pushToFirebase() {
+      db.ref('syncData').set({
+        members: members,
+        courtState: courtState,
+        updatedAt: firebase.database.ServerValue.TIMESTAMP
+      });
+    }
+
+    // Firebase 데이터 수신 및 반영 (실시간 수신)
+    db.ref('syncData').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        members = data.members || [];
+        courtState = {
+          1: (data.courtState && data.courtState[1]) ? data.courtState[1] : [null, null, null, null],
+          2: (data.courtState && data.courtState[2]) ? data.courtState[2] : [null, null, null, null]
+        };
+      } else {
+        members = [];
+        courtState = {
+          1: [null, null, null, null],
+          2: [null, null, null, null]
+        };
+      }
+      render();
+    }, (error) => {
+      console.error('Firebase sync error:', error);
+    });
+
+    // 화면 초기화 및 렌더링
+    function render() {
+      renderSummary();
+      renderMemberList();
+      renderCourts();
+    }
+
+    // 1. 요약 정보 업데이트
+    function renderSummary() {
+      document.getElementById('cnt-total').innerText = members.length;
+      document.getElementById('cnt-play').innerText = members.filter(m => m.status === 'play').length;
+      document.getElementById('cnt-rest').innerText = members.filter(m => m.status === 'rest').length;
+      document.getElementById('cnt-off').innerText = members.filter(m => m.status === 'off').length;
+    }
+
+    // 2. 회원 목록 렌더링 (게임 수 적은 순 정렬)
+    function renderMemberList() {
+      const listEl = document.getElementById('member-list');
+      listEl.innerHTML = '';
+
+      if (members.length === 0) {
+        listEl.innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:20px; font-size:0.9rem;">등록된 회원이 없습니다. 상단에서 회원을 추가해 주세요.</div>';
+        return;
+      }
+
+      const sortedMembers = [...members].sort((a, b) => a.games - b.games);
+
+      sortedMembers.forEach(m => {
+        const card = document.createElement('div');
+        const isSelected = String(selectedMemberId) === String(m.id);
+        card.className = `member-card ${m.status} ${isSelected ? 'selected-member' : ''}`;
+        
+        if (m.status !== 'off') {
+          card.draggable = true;
+          card.ondragstart = (e) => handleDragStart(e, m.id);
+        }
+
+        card.onclick = () => selectMember(m.id);
+
+        card.innerHTML = `
+          <div class="member-info">
+            <span class="name">${m.name}</span>
+            <span class="gender">(${m.gender})</span>
+            <span class="badge grade-${m.grade}">${m.grade}</span>
+            <button class="btn-delete-member" onclick="event.stopPropagation(); deleteMember('${m.id}')" title="회원 삭제">✕</button>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px;" onclick="event.stopPropagation()">
+            <!-- 게임 수 조절 -->
+            <div class="game-cnt-box">
+              <button class="btn-cnt" onclick="changeGameCnt('${m.id}', -1)">-</button>
+              <span class="cnt-num">${m.games}게임</span>
+              <button class="btn-cnt" onclick="changeGameCnt('${m.id}', 1)">+</button>
+            </div>
+
+            <!-- 상태 변환 버튼 -->
+            <div class="status-group">
+              <button class="status-btn ${m.status === 'play' ? 'active-play' : ''}" onclick="setStatus('${m.id}', 'play')">참여</button>
+              <button class="status-btn ${m.status === 'rest' ? 'active-rest' : ''}" onclick="setStatus('${m.id}', 'rest')">휴식</button>
+              <button class="status-btn ${m.status === 'off' ? 'active-off' : ''}" onclick="setStatus('${m.id}', 'off')">퇴근</button>
+            </div>
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    // 3. 코트 배치 현황 렌더링
+    function renderCourts() {
+      [1, 2].forEach(courtNo => {
+        courtState[courtNo].forEach((memberId, slotIndex) => {
+          const slotEl = document.getElementById(`slot-${courtNo}-${slotIndex}`);
+          const member = members.find(m => String(m.id) === String(memberId));
+          
+          if (member) {
+            slotEl.className = 'slot occupied';
+            slotEl.innerHTML = `
+              <span>${member.name} <span class="badge grade-${member.grade}">${member.grade}</span></span>
+              <span style="color:#ef4444; cursor:pointer; font-size:12px;" onclick="event.stopPropagation(); removeFromSlot(${courtNo}, ${slotIndex})">✕</span>
+            `;
+          } else {
+            slotEl.className = 'slot';
+            slotEl.innerText = '빈 슬롯';
+          }
+        });
+      });
+    }
+
+    // --- 이벤트 핸들러 & 로직 ---
+
+    function selectMember(id) {
+      const member = members.find(m => String(m.id) === String(id));
+      if (!member || member.status === 'off') return;
+
+      if (String(selectedMemberId) === String(id)) {
+        selectedMemberId = null; // 선택 해제
+      } else {
+        selectedMemberId = id;
+      }
+      render();
+    }
+
+    function assignToSlot(courtNo, slotIndex) {
+      if (!selectedMemberId) return;
+      const member = members.find(m => String(m.id) === String(selectedMemberId));
+      if (!member) return;
+
+      removeMemberFromAllCourts(member.id);
+      courtState[courtNo][slotIndex] = member.id;
+      selectedMemberId = null;
+      render();
+      pushToFirebase();
+    }
+
+    function handleDragStart(e, id) {
+      e.dataTransfer.setData('text/plain', String(id));
+    }
+
+    function allowDrop(e) {
+      e.preventDefault();
+    }
+
+    function handleDrop(e, courtNo, slotIndex) {
+      e.preventDefault();
+      const rawId = e.dataTransfer.getData('text/plain');
+      const member = members.find(m => String(m.id) === String(rawId));
+      if (!member || member.status === 'off') return;
+
+      removeMemberFromAllCourts(member.id);
+      courtState[courtNo][slotIndex] = member.id;
+      render();
+      pushToFirebase();
+    }
+
+    function removeMemberFromAllCourts(memberId) {
+      [1, 2].forEach(c => {
+        courtState[c] = courtState[c].map(id => String(id) === String(memberId) ? null : id);
+      });
+    }
+
+    function removeFromSlot(courtNo, slotIndex) {
+      courtState[courtNo][slotIndex] = null;
+      render();
+      pushToFirebase();
+    }
+
+    function changeGameCnt(id, delta) {
+      const member = members.find(m => String(m.id) === String(id));
+      if (member) {
+        member.games = Math.max(0, member.games + delta);
+        render();
+        pushToFirebase();
+      }
+    }
+
+    function setStatus(id, newStatus) {
+      const member = members.find(m => String(m.id) === String(id));
+      if (member) {
+        member.status = newStatus;
+        if (newStatus === 'off') {
+          removeMemberFromAllCourts(id);
+        }
+        render();
+        pushToFirebase();
+      }
+    }
+
+    function addMember(e) {
+      e.preventDefault();
+      const nameInput = document.getElementById('new-name');
+      const genderInput = document.getElementById('new-gender');
+      const gradeInput = document.getElementById('new-grade');
+
+      const name = nameInput.value.trim();
+      if (!name) return;
+
+      const newMember = {
+        id: 'm_' + Date.now(),
+        name: name,
+        gender: genderInput.value,
+        grade: gradeInput.value,
+        games: 0,
+        status: 'play'
+      };
+
+      members.push(newMember);
+      nameInput.value = '';
+      render();
+      pushToFirebase();
+    }
+
+    function deleteMember(id) {
+      if (confirm('해당 회원을 삭제하시겠습니까?')) {
+        removeMemberFromAllCourts(id);
+        members = members.filter(m => String(m.id) !== String(id));
+        if (String(selectedMemberId) === String(id)) selectedMemberId = null;
+        render();
+        pushToFirebase();
+      }
+    }
+
+    function finishGame(courtNo) {
+      const activePlayerIds = courtState[courtNo].filter(id => id !== null);
+      if (activePlayerIds.length === 0) {
+        alert('코트에 배정된 인원이 없습니다.');
+        return;
+      }
+
+      if (confirm(`${courtNo}코트 게임을 종료하고 배정된 인원의 게임 수를 +1 증가시키겠습니까?`)) {
+        activePlayerIds.forEach(id => {
+          const member = members.find(m => String(m.id) === String(id));
+          if (member) member.games += 1;
+        });
+
+        courtState[courtNo] = [null, null, null, null];
+        render();
+        pushToFirebase();
+      }
+    }
+
+    // 전체 데이터 초기화
+    function resetData() {
+      if (confirm('모든 출석 명단과 코트 현황을 초기화하시겠습니까?\n(Firebase 데이터도 함께 삭제됩니다)')) {
+        members = [];
+        courtState = {
+          1: [null, null, null, null],
+          2: [null, null, null, null]
+        };
+        selectedMemberId = null;
+        render();
+        pushToFirebase();
+      }
+    }
+
+    // 초기 실행
+    render();
+  </script>
+</body>
+</html>
