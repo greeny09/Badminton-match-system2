@@ -105,12 +105,14 @@
     }
 
     .header-actions { display: flex; align-items: center; gap: 6px; }
+    
+    /* 헤더 버튼 크기 축소 (글자 크기 유지, 여백 조절) */
     .btn-automatch {
-      padding: 8px 12px;
+      padding: 4px 8px;
       background: #10b981;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       font-size: 0.78rem;
       font-weight: 700;
       cursor: pointer;
@@ -120,11 +122,11 @@
     .btn-automatch:active { background: #059669; }
 
     .btn-reset { 
-      padding: 8px 12px; 
+      padding: 4px 8px; 
       background: #fee2e2; 
       color: var(--danger); 
       border: 1px solid #fca5a5; 
-      border-radius: 8px; 
+      border-radius: 6px; 
       font-size: 0.78rem; 
       font-weight: 700; 
       cursor: pointer; 
@@ -293,25 +295,30 @@
     .member-card.rest { background: #fffbeb; border-left-color: #f59e0b; }
 
     .member-info { display: flex; align-items: center; gap: 6px; flex-shrink: 0; white-space: nowrap; }
+    
+    /* 이름 및 게임중 문구 세로 배치 스타일 */
+    .name-box { display: flex; flex-direction: column; justify-content: center; }
+    .name-row { display: flex; align-items: center; gap: 4px; }
     .name { font-weight: 800; font-size: 0.95rem; }
     .gender { font-size: 0.75rem; font-weight: bold; }
     .gender-남-text { color: #2563eb; }
     .gender-여-text { color: #dc2626; }
+    
+    .ingame-status { 
+      font-size: 0.68rem; 
+      color: #10b981; 
+      font-weight: 800; 
+      line-height: 1.1; 
+      margin-top: 2px; 
+    }
 
-    /* 급수 및 상태 배지 */
+    /* 급수 배지 */
     .badge { padding: 2px 6px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; color: white; white-space: nowrap; }
     .grade-A { background-color: var(--grade-a); }
     .grade-B { background-color: var(--grade-b); }
     .grade-C { background-color: var(--grade-c); }
     .grade-D { background-color: var(--grade-d); }
     .grade-E { background-color: var(--grade-e); }
-    
-    /* 게임중 뱃지 스타일 */
-    .badge-ingame { 
-      background-color: #2563eb; 
-      color: white; 
-      box-shadow: 0 1px 3px rgba(37, 99, 235, 0.3);
-    }
 
     .member-controls { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
 
@@ -659,10 +666,14 @@
 
         card.innerHTML = `
           <div class="member-info">
-            <span class="name">${m.name}</span>
-            <span class="gender ${m.gender === '남' ? 'gender-남-text' : 'gender-여-text'}">(${m.gender})</span>
-            <span class="badge grade-${m.grade}">${m.grade}</span>
-            ${inGame ? '<span class="badge badge-ingame">🏸 게임중</span>' : ''}
+            <div class="name-box">
+              <div class="name-row">
+                <span class="name">${m.name}</span>
+                <span class="gender ${m.gender === '남' ? 'gender-남-text' : 'gender-여-text'}">(${m.gender})</span>
+                <span class="badge grade-${m.grade}">${m.grade}</span>
+              </div>
+              ${inGame ? '<span class="ingame-status">게임중</span>' : ''}
+            </div>
           </div>
 
           <div class="member-controls" onclick="event.stopPropagation()">
