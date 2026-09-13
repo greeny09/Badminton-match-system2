@@ -45,6 +45,19 @@
       margin: 0 auto; 
     }
 
+    /* 태블릿 가로모드 및 넓은 화면 대응 (2*2 코트 배치) */
+    @media screen and (min-width: 768px) {
+      body {
+        max-width: 1000px;
+        padding: 20px;
+      }
+      .court-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 14px !important;
+      }
+    }
+
     /* 메인 배너 영역 */
     .club-banner {
       width: 100%;
@@ -67,7 +80,7 @@
       object-fit: contain;
     }
 
-    /* 헤더 영역 (LIVE 삭제) */
+    /* 헤더 영역 */
     header { 
       display: flex; 
       justify-content: space-between; 
@@ -84,7 +97,20 @@
       letter-spacing: -0.5px;
     }
 
-    .header-actions { display: flex; align-items: center; }
+    .header-actions { display: flex; align-items: center; gap: 6px; }
+    .btn-automatch {
+      padding: 8px 12px;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-automatch:active { background: #059669; }
+
     .btn-reset { 
       padding: 8px 12px; 
       background: #fee2e2; 
@@ -120,7 +146,7 @@
     .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .section-title { font-size: 1rem; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 4px; }
 
-    /* 코트 그리드 (모바일 1열 우선) */
+    /* 코트 그리드 (모바일 1열, 태블릿 가로 2열) */
     .court-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
     .court-card { 
       background: var(--card-bg); 
@@ -169,6 +195,7 @@
       padding: 6px 8px; 
       word-break: break-all;
     }
+    .slot:hover { background-color: #f1f5f9; }
     .slot.occupied { border-style: solid; color: var(--text-main); font-weight: 700; justify-content: space-between; }
     .slot.occupied.gender-남 { border: 2px solid var(--male-border) !important; background-color: var(--male-bg) !important; }
     .slot.occupied.gender-여 { border: 2px solid var(--female-border) !important; background-color: var(--female-bg) !important; }
@@ -189,14 +216,14 @@
     }
     .btn-finish:active { background: var(--primary-hover); }
 
-    /* 회원 추가 폼 모바일 개선 */
+    /* 회원 추가 폼 */
     .add-member-form { display: flex; gap: 6px; margin-bottom: 12px; }
     .add-member-form input, .add-member-form select { 
       min-height: 42px;
       padding: 0 10px; 
       border: 1px solid #cbd5e1; 
       border-radius: 8px; 
-      font-size: 16px; /* 모바일 자동 확대 방지 */
+      font-size: 16px; 
       background: #fff;
     }
     .add-member-form input[type="text"] { flex: 1; min-width: 0; }
@@ -264,6 +291,66 @@
     .status-btn.active-rest { background-color: #f59e0b; color: white; }
     .status-btn.active-off { background-color: #6b7280; color: white; }
     .btn-delete-member { border: none; background: transparent; color: #ef4444; font-weight: 800; cursor: pointer; font-size: 1rem; padding: 0 4px; margin-left: 2px; }
+
+    /* 모달 팝업 스타일 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-card {
+      background: #fff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      font-size: 1rem;
+      color: #1e3a8a;
+    }
+    .modal-close {
+      font-size: 1.2rem;
+      color: #64748b;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .modal-body {
+      padding: 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .modal-item {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .modal-item:hover { background-color: #f8fafc; }
+    .modal-item.gender-남 { background-color: var(--male-bg); border-left: 4px solid var(--male-border); }
+    .modal-item.gender-여 { background-color: var(--female-bg); border-left: 4px solid var(--female-border); }
   </style>
 </head>
 <body>
@@ -273,10 +360,11 @@
     <img src="TalkMedia_i_8536f8c1c07a.png.png" alt="하이클리어 강동구 배드민턴 소모임" class="banner-img">
   </div>
 
-  <!-- 헤더 영역 (LIVE 삭제 적용) -->
+  <!-- 헤더 영역 -->
   <header>
     <h1>🏸 하이클리어 매칭 현황판</h1>
     <div class="header-actions">
+      <button class="btn-automatch" onclick="autoMatch()">⚡ 자동 매칭</button>
       <button class="btn-reset" onclick="resetData()">🧹 초기화</button>
     </div>
   </header>
@@ -291,7 +379,7 @@
 
   <!-- 진행 코트 영역 -->
   <div class="section-title">🏟️ 진행 코트 현황</div>
-  <div style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 8px;">* 사람을 선택한 후 빈 코트 슬롯을 터치하세요.</div>
+  <div style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 8px;">* 빈 슬롯을 터치하면 게임수가 적은 순으로 회원을 선택할 수 있습니다.</div>
   
   <div class="court-grid">
     <!-- 코트 1 -->
@@ -302,13 +390,13 @@
       </div>
       <div class="court-slots">
         <div class="team-box">
-          <div class="slot" onclick="assignToSlot(1, 0)" ondrop="handleDrop(event, 1, 0)" ondragover="allowDrop(event)" id="slot-1-0">빈 슬롯</div>
-          <div class="slot" onclick="assignToSlot(1, 1)" ondrop="handleDrop(event, 1, 1)" ondragover="allowDrop(event)" id="slot-1-1">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(1, 0)" ondrop="handleDrop(event, 1, 0)" ondragover="allowDrop(event)" id="slot-1-0">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(1, 1)" ondrop="handleDrop(event, 1, 1)" ondragover="allowDrop(event)" id="slot-1-1">빈 슬롯</div>
         </div>
         <div class="vs">VS</div>
         <div class="team-box">
-          <div class="slot" onclick="assignToSlot(1, 2)" ondrop="handleDrop(event, 1, 2)" ondragover="allowDrop(event)" id="slot-1-2">빈 슬롯</div>
-          <div class="slot" onclick="assignToSlot(1, 3)" ondrop="handleDrop(event, 1, 3)" ondragover="allowDrop(event)" id="slot-1-3">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(1, 2)" ondrop="handleDrop(event, 1, 2)" ondragover="allowDrop(event)" id="slot-1-2">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(1, 3)" ondrop="handleDrop(event, 1, 3)" ondragover="allowDrop(event)" id="slot-1-3">빈 슬롯</div>
         </div>
       </div>
       <button class="btn-finish" onclick="finishGame(1)">게임 완료 및 +1게임 적용</button>
@@ -322,13 +410,13 @@
       </div>
       <div class="court-slots">
         <div class="team-box">
-          <div class="slot" onclick="assignToSlot(2, 0)" ondrop="handleDrop(event, 2, 0)" ondragover="allowDrop(event)" id="slot-2-0">빈 슬롯</div>
-          <div class="slot" onclick="assignToSlot(2, 1)" ondrop="handleDrop(event, 2, 1)" ondragover="allowDrop(event)" id="slot-2-1">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(2, 0)" ondrop="handleDrop(event, 2, 0)" ondragover="allowDrop(event)" id="slot-2-0">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(2, 1)" ondrop="handleDrop(event, 2, 1)" ondragover="allowDrop(event)" id="slot-2-1">빈 슬롯</div>
         </div>
         <div class="vs">VS</div>
         <div class="team-box">
-          <div class="slot" onclick="assignToSlot(2, 2)" ondrop="handleDrop(event, 2, 2)" ondragover="allowDrop(event)" id="slot-2-2">빈 슬롯</div>
-          <div class="slot" onclick="assignToSlot(2, 3)" ondrop="handleDrop(event, 2, 3)" ondragover="allowDrop(event)" id="slot-2-3">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(2, 2)" ondrop="handleDrop(event, 2, 2)" ondragover="allowDrop(event)" id="slot-2-2">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(2, 3)" ondrop="handleDrop(event, 2, 3)" ondragover="allowDrop(event)" id="slot-2-3">빈 슬롯</div>
         </div>
       </div>
       <button class="btn-finish" onclick="finishGame(2)">게임 완료 및 +1게임 적용</button>
@@ -346,13 +434,13 @@
       </div>
       <div class="court-slots">
         <div class="team-box">
-          <div class="slot" onclick="assignToSlot(3, 0)" ondrop="handleDrop(event, 3, 0)" ondragover="allowDrop(event)" id="slot-3-0">빈 슬롯</div>
-          <div class="slot" onclick="assignToSlot(3, 1)" ondrop="handleDrop(event, 3, 1)" ondragover="allowDrop(event)" id="slot-3-1">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(3, 0)" ondrop="handleDrop(event, 3, 0)" ondragover="allowDrop(event)" id="slot-3-0">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(3, 1)" ondrop="handleDrop(event, 3, 1)" ondragover="allowDrop(event)" id="slot-3-1">빈 슬롯</div>
         </div>
         <div class="vs">VS</div>
         <div class="team-box">
-          <div class="slot" onclick="assignToSlot(3, 2)" ondrop="handleDrop(event, 3, 2)" ondragover="allowDrop(event)" id="slot-3-2">빈 슬롯</div>
-          <div class="slot" onclick="assignToSlot(3, 3)" ondrop="handleDrop(event, 3, 3)" ondragover="allowDrop(event)" id="slot-3-3">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(3, 2)" ondrop="handleDrop(event, 3, 2)" ondragover="allowDrop(event)" id="slot-3-2">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(3, 3)" ondrop="handleDrop(event, 3, 3)" ondragover="allowDrop(event)" id="slot-3-3">빈 슬롯</div>
         </div>
       </div>
       <button class="btn-finish" style="background:#f59e0b;" onclick="finishGame(3)">게임 완료 및 +1게임 적용</button>
@@ -366,13 +454,13 @@
       </div>
       <div class="court-slots">
         <div class="team-box">
-          <div class="slot" onclick="assignToSlot(4, 0)" ondrop="handleDrop(event, 4, 0)" ondragover="allowDrop(event)" id="slot-4-0">빈 슬롯</div>
-          <div class="slot" onclick="assignToSlot(4, 1)" ondrop="handleDrop(event, 4, 1)" ondragover="allowDrop(event)" id="slot-4-1">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(4, 0)" ondrop="handleDrop(event, 4, 0)" ondragover="allowDrop(event)" id="slot-4-0">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(4, 1)" ondrop="handleDrop(event, 4, 1)" ondragover="allowDrop(event)" id="slot-4-1">빈 슬롯</div>
         </div>
         <div class="vs">VS</div>
         <div class="team-box">
-          <div class="slot" onclick="assignToSlot(4, 2)" ondrop="handleDrop(event, 4, 2)" ondragover="allowDrop(event)" id="slot-4-2">빈 슬롯</div>
-          <div class="slot" onclick="assignToSlot(4, 3)" ondrop="handleDrop(event, 4, 3)" ondragover="allowDrop(event)" id="slot-4-3">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(4, 2)" ondrop="handleDrop(event, 4, 2)" ondragover="allowDrop(event)" id="slot-4-2">빈 슬롯</div>
+          <div class="slot" onclick="handleSlotClick(4, 3)" ondrop="handleDrop(event, 4, 3)" ondragover="allowDrop(event)" id="slot-4-3">빈 슬롯</div>
         </div>
       </div>
       <button class="btn-finish" style="background:#f59e0b;" onclick="finishGame(4)">게임 완료 및 +1게임 적용</button>
@@ -403,6 +491,17 @@
   <!-- 회원 목록 -->
   <div class="member-list" id="member-list"></div>
 
+  <!-- 회원 선택 팝업 모달 -->
+  <div class="modal-overlay" id="member-select-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>회원 선택 (게임 적은 순)</span>
+        <span class="modal-close" onclick="closeModal()">✕</span>
+      </div>
+      <div class="modal-body" id="modal-member-list"></div>
+    </div>
+  </div>
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -430,6 +529,8 @@
     };
 
     let selectedMemberId = null;
+    let targetCourtNo = null;
+    let targetSlotIndex = null;
 
     function pushToFirebase() {
       db.ref('syncData').set({
@@ -561,6 +662,15 @@
       render();
     }
 
+    /* 슬롯 클릭 처리 (사전 선택 인원 없을 경우 모달 창 오픈) */
+    function handleSlotClick(courtNo, slotIndex) {
+      if (selectedMemberId) {
+        assignToSlot(courtNo, slotIndex);
+      } else {
+        openMemberModal(courtNo, slotIndex);
+      }
+    }
+
     function assignToSlot(courtNo, slotIndex) {
       if (!selectedMemberId) return;
       const member = members.find(m => String(m.id) === String(selectedMemberId));
@@ -571,6 +681,68 @@
       selectedMemberId = null;
       render();
       pushToFirebase();
+    }
+
+    /* 회원의 현재 코트 배정 여부 확인 */
+    function isMemberAssigned(memberId) {
+      for (let c = 1; c <= 4; c++) {
+        if (courtState[c].some(id => String(id) === String(memberId))) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    /* 빈 슬롯 클릭 시 회원 선택 모달 창 생성 및 띄우기 */
+    function openMemberModal(courtNo, slotIndex) {
+      targetCourtNo = courtNo;
+      targetSlotIndex = slotIndex;
+
+      const modalList = document.getElementById('modal-member-list');
+      modalList.innerHTML = '';
+
+      // 참여(play) 상태이며 코트에 배정되지 않은 회원을 게임 수 적은 순으로 정렬
+      const availableMembers = members
+        .filter(m => m.status === 'play' && !isMemberAssigned(m.id))
+        .sort((a, b) => a.games - b.games);
+
+      if (availableMembers.length === 0) {
+        modalList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-sub); font-size:0.85rem;">대기 중인 참여 회원이 없습니다.</div>';
+      } else {
+        availableMembers.forEach(m => {
+          const item = document.createElement('div');
+          item.className = `modal-item gender-${m.gender}`;
+          item.onclick = () => selectMemberFromModal(m.id);
+
+          item.innerHTML = `
+            <div class="member-info">
+              <span class="name">${m.name}</span>
+              <span class="gender ${m.gender === '남' ? 'gender-남-text' : 'gender-여-text'}">(${m.gender})</span>
+              <span class="badge grade-${m.grade}">${m.grade}</span>
+            </div>
+            <div style="font-weight:700; color:var(--primary); font-size:0.85rem;">${m.games}게임 진행 중</div>
+          `;
+          modalList.appendChild(item);
+        });
+      }
+
+      document.getElementById('member-select-modal').classList.add('active');
+    }
+
+    function selectMemberFromModal(memberId) {
+      if (targetCourtNo !== null && targetSlotIndex !== null) {
+        removeMemberFromAllCourts(memberId);
+        courtState[targetCourtNo][targetSlotIndex] = memberId;
+        render();
+        pushToFirebase();
+      }
+      closeModal();
+    }
+
+    function closeModal() {
+      document.getElementById('member-select-modal').classList.remove('active');
+      targetCourtNo = null;
+      targetSlotIndex = null;
     }
 
     function handleDragStart(e, id) {
@@ -678,6 +850,77 @@
         courtState[courtNo] = [null, null, null, null];
         render();
         pushToFirebase();
+      }
+    }
+
+    /* 성별 점수 환산 로직 (여 D == 남 E) */
+    function getSkillValue(member) {
+      const maleScore = { 'A': 5, 'B': 4, 'C': 3, 'D': 2, 'E': 1 };
+      const femaleScore = { 'A': 4, 'B': 3, 'C': 2, 'D': 1, 'E': 0 };
+
+      if (member.gender === '남') {
+        return maleScore[member.grade] || 1;
+      } else {
+        return femaleScore[member.grade] || 0;
+      }
+    }
+
+    /* 4명의 플레이어를 실력이 최대한 균등하게 2:2 팀으로 분배 */
+    function getBalancedTeams(fourPlayers) {
+      const p = fourPlayers;
+      const s = p.map(getSkillValue);
+
+      const diff1 = Math.abs((s[0] + s[1]) - (s[2] + s[3]));
+      const diff2 = Math.abs((s[0] + s[2]) - (s[1] + s[3]));
+      const diff3 = Math.abs((s[0] + s[3]) - (s[1] + s[2]));
+
+      const minDiff = Math.min(diff1, diff2, diff3);
+
+      if (minDiff === diff1) return [p[0], p[1], p[2], p[3]];
+      if (minDiff === diff2) return [p[0], p[2], p[1], p[3]];
+      return [p[0], p[3], p[1], p[2]];
+    }
+
+    /* 자동 매칭 시스템 */
+    function autoMatch() {
+      // 1. 코트에 배치되어 있지 않고 '참여' 상태인 회원 추출
+      let candidates = members.filter(m => m.status === 'play' && !isMemberAssigned(m.id));
+
+      if (candidates.length < 4) {
+        alert('자동 매칭을 수행하려면 대기 중인 참여 회원이 최소 4명 이상이어야 합니다.');
+        return;
+      }
+
+      let filledCourtsCount = 0;
+
+      // 코트 1부터 4까지 비어있는 코트에 매칭 진행
+      [1, 2, 3, 4].forEach(courtNo => {
+        const isEmptyCourt = courtState[courtNo].every(slot => slot === null);
+
+        if (isEmptyCourt && candidates.length >= 4) {
+          // 게임 참가 횟수가 적은 사람 우선 순선 정렬 (게임 수 동률 시 실력 점수순 정렬)
+          candidates.sort((a, b) => {
+            if (a.games !== b.games) return a.games - b.games;
+            return getSkillValue(b) - getSkillValue(a);
+          });
+
+          // 상위 4명 추출
+          const selected = candidates.splice(0, 4);
+
+          // 2:2 팀 벨런스 조정 (남/여 실력 차 보정 적용)
+          const balanced = getBalancedTeams(selected);
+
+          courtState[courtNo] = [balanced[0].id, balanced[1].id, balanced[2].id, balanced[3].id];
+          filledCourtsCount++;
+        }
+      });
+
+      if (filledCourtsCount > 0) {
+        render();
+        pushToFirebase();
+        alert(`${filledCourtsCount}개 코트에 자동 매칭이 완료되었습니다.`);
+      } else {
+        alert('완전히 비어있는 코트가 없거나 대기 인원이 부족합니다.');
       }
     }
 
