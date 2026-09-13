@@ -35,6 +35,7 @@
       padding: 0; 
       font-family: 'Pretendard', system-ui, -apple-system, sans-serif; 
       -webkit-tap-highlight-color: transparent;
+      word-break: keep-all; /* 모바일 한글 단어 끊김 방지 */
     }
 
     body { 
@@ -45,7 +46,7 @@
       margin: 0 auto; 
     }
 
-    /* 태블릿 가로모드 및 넓은 화면 대응 (2*2 코트 배치) */
+    /* 태블릿 가로모드 및 넓은 화면 대응 (코트 2*2 및 회원목록 2열 배치) */
     @media screen and (min-width: 768px) {
       body {
         max-width: 1000px;
@@ -55,6 +56,11 @@
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
         gap: 14px !important;
+      }
+      .member-list {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
       }
     }
 
@@ -95,6 +101,7 @@
       font-weight: 800; 
       color: #1e3a8a; 
       letter-spacing: -0.5px;
+      white-space: nowrap;
     }
 
     .header-actions { display: flex; align-items: center; gap: 6px; }
@@ -107,6 +114,7 @@
       font-size: 0.78rem;
       font-weight: 700;
       cursor: pointer;
+      white-space: nowrap;
       transition: all 0.2s;
     }
     .btn-automatch:active { background: #059669; }
@@ -120,6 +128,7 @@
       font-size: 0.78rem; 
       font-weight: 700; 
       cursor: pointer; 
+      white-space: nowrap;
       transition: all 0.2s; 
     }
     .btn-reset:active { background: #fca5a5; color: white; }
@@ -140,13 +149,13 @@
       border: 1px solid #e2e8f0; 
     }
     .summary-item { display: flex; flex-direction: column; gap: 2px; }
-    .summary-item span { font-size: 0.72rem; }
+    .summary-item span { font-size: 0.72rem; white-space: nowrap; }
     .summary-item b { font-size: 1rem; color: var(--primary); }
 
     .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .section-title { font-size: 1rem; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 4px; }
+    .section-title { font-size: 1rem; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
 
-    /* 코트 그리드 (모바일 1열, 태블릿 가로 2열) */
+    /* 코트 그리드 */
     .court-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
     .court-card { 
       background: var(--card-bg); 
@@ -154,8 +163,14 @@
       padding: 12px; 
       border: 2px solid var(--primary); 
       box-shadow: 0 2px 6px rgba(37, 99, 235, 0.06); 
+      transition: opacity 0.2s, background 0.2s;
     }
     .court-card.waiting-court { border-color: #f59e0b; }
+    .court-card.disabled-court {
+      opacity: 0.55;
+      background: #f1f5f9;
+      border-color: #cbd5e1 !important;
+    }
     
     .court-header { 
       display: flex; 
@@ -168,6 +183,18 @@
     }
     .waiting-court .court-header { color: #d97706; }
     
+    .btn-court-toggle {
+      border: none;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-court-toggle.active { background-color: #10b981; color: white; }
+    .btn-court-toggle.disabled { background-color: #64748b; color: white; }
+
     .court-slots { 
       display: grid; 
       grid-template-columns: 1fr auto 1fr; 
@@ -179,7 +206,7 @@
     }
     .team-box { display: flex; flex-direction: column; gap: 6px; }
     
-    /* 터치하기 편한 슬롯 디자인 */
+    /* 슬롯 디자인 */
     .slot { 
       min-height: 44px; 
       background: #fff; 
@@ -193,7 +220,9 @@
       cursor: pointer; 
       transition: all 0.15s; 
       padding: 6px 8px; 
-      word-break: break-all;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .slot:hover { background-color: #f1f5f9; }
     .slot.occupied { border-style: solid; color: var(--text-main); font-weight: 700; justify-content: space-between; }
@@ -213,6 +242,7 @@
       font-size: 0.85rem;
       font-weight: 700; 
       cursor: pointer; 
+      white-space: nowrap;
     }
     .btn-finish:active { background: var(--primary-hover); }
 
@@ -240,14 +270,14 @@
       white-space: nowrap;
     }
 
-    /* 회원 목록 카드리스트 */
+    /* 회원 목록 */
     .member-list { display: flex; flex-direction: column; gap: 8px; }
     .member-card { 
       background: var(--card-bg); 
       border-radius: 12px; 
       padding: 10px 12px; 
       display: flex; 
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       justify-content: space-between; 
       align-items: center; 
       gap: 8px;
@@ -262,37 +292,44 @@
     .member-card.off { opacity: 0.45; }
     .member-card.rest { background: #fffbeb; border-left-color: #f59e0b; }
 
-    .member-info { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .member-info { display: flex; align-items: center; gap: 6px; flex-shrink: 0; white-space: nowrap; }
     .name { font-weight: 800; font-size: 0.95rem; }
     .gender { font-size: 0.75rem; font-weight: bold; }
     .gender-남-text { color: #2563eb; }
     .gender-여-text { color: #dc2626; }
 
-    /* 급수 배지 */
-    .badge { padding: 2px 6px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; color: white; }
+    /* 급수 및 상태 배지 */
+    .badge { padding: 2px 6px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; color: white; white-space: nowrap; }
     .grade-A { background-color: var(--grade-a); }
     .grade-B { background-color: var(--grade-b); }
     .grade-C { background-color: var(--grade-c); }
     .grade-D { background-color: var(--grade-d); }
     .grade-E { background-color: var(--grade-e); }
+    
+    /* 게임중 뱃지 스타일 */
+    .badge-ingame { 
+      background-color: #2563eb; 
+      color: white; 
+      box-shadow: 0 1px 3px rgba(37, 99, 235, 0.3);
+    }
 
-    .member-controls { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+    .member-controls { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
 
     /* 게임 수 컨트롤 */
     .game-cnt-box { display: flex; align-items: center; gap: 2px; background: #ffffff; padding: 2px; border-radius: 6px; border: 1px solid #cbd5e1; }
     .btn-cnt { border: none; background: #f1f5f9; width: 26px; height: 26px; border-radius: 4px; font-weight: 800; font-size: 0.9rem; cursor: pointer; color: #334155; }
     .btn-cnt:active { background: #cbd5e1; }
-    .cnt-num { font-size: 0.8rem; font-weight: 800; color: #334155; min-width: 38px; text-align: center; }
+    .cnt-num { font-size: 0.8rem; font-weight: 800; color: #334155; min-width: 38px; text-align: center; white-space: nowrap; }
 
-    /* 상태 조절 토글 버튼 및 삭제 버튼 */
+    /* 상태 버튼 */
     .status-group { display: flex; gap: 2px; background: #ffffff; padding: 2px; border-radius: 6px; border: 1px solid #cbd5e1; }
-    .status-btn { border: none; padding: 5px 8px; font-size: 0.72rem; font-weight: 700; border-radius: 4px; cursor: pointer; background: transparent; color: var(--text-sub); }
+    .status-btn { border: none; padding: 5px 8px; font-size: 0.72rem; font-weight: 700; border-radius: 4px; cursor: pointer; background: transparent; color: var(--text-sub); white-space: nowrap; }
     .status-btn.active-play { background-color: var(--primary); color: white; }
     .status-btn.active-rest { background-color: #f59e0b; color: white; }
     .status-btn.active-off { background-color: #6b7280; color: white; }
     .btn-delete-member { border: none; background: transparent; color: #ef4444; font-weight: 800; cursor: pointer; font-size: 1rem; padding: 0 4px; margin-left: 2px; }
 
-    /* 모달 팝업 스타일 */
+    /* 모달 팝업 */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -324,6 +361,7 @@
       font-weight: 800;
       font-size: 1rem;
       color: #1e3a8a;
+      white-space: nowrap;
     }
     .modal-close {
       font-size: 1.2rem;
@@ -383,7 +421,7 @@
   
   <div class="court-grid">
     <!-- 코트 1 -->
-    <div class="court-card">
+    <div class="court-card" id="court-card-1">
       <div class="court-header">
         <span>1 코트</span>
         <span style="font-size:0.75rem; color:#6b7280; font-weight: normal;">진행 중</span>
@@ -403,7 +441,7 @@
     </div>
 
     <!-- 코트 2 -->
-    <div class="court-card">
+    <div class="court-card" id="court-card-2">
       <div class="court-header">
         <span>2 코트</span>
         <span style="font-size:0.75rem; color:#6b7280; font-weight: normal;">진행 중</span>
@@ -427,10 +465,10 @@
   <div class="section-title">⏳ 대기 코트 현황</div>
   <div class="court-grid">
     <!-- 코트 3 (대기 1) -->
-    <div class="court-card waiting-court">
+    <div class="court-card waiting-court" id="court-card-3">
       <div class="court-header">
         <span>3 코트 (대기 1)</span>
-        <span style="font-size:0.75rem; color:#d97706; font-weight: normal;">다음 대기</span>
+        <button class="btn-court-toggle active" id="btn-toggle-3" onclick="toggleCourt(3)">활성화 (ON)</button>
       </div>
       <div class="court-slots">
         <div class="team-box">
@@ -443,14 +481,14 @@
           <div class="slot" onclick="handleSlotClick(3, 3)" ondrop="handleDrop(event, 3, 3)" ondragover="allowDrop(event)" id="slot-3-3">빈 슬롯</div>
         </div>
       </div>
-      <button class="btn-finish" style="background:#f59e0b;" onclick="finishGame(3)">게임 완료 및 +1게임 적용</button>
+      <button class="btn-finish" style="background:#f59e0b;" onclick="moveToEmptyCourt(3)">비어있는 코트로 보내기</button>
     </div>
 
     <!-- 코트 4 (대기 2) -->
-    <div class="court-card waiting-court">
+    <div class="court-card waiting-court" id="court-card-4">
       <div class="court-header">
         <span>4 코트 (대기 2)</span>
-        <span style="font-size:0.75rem; color:#d97706; font-weight: normal;">다음 대기</span>
+        <button class="btn-court-toggle active" id="btn-toggle-4" onclick="toggleCourt(4)">활성화 (ON)</button>
       </div>
       <div class="court-slots">
         <div class="team-box">
@@ -463,7 +501,7 @@
           <div class="slot" onclick="handleSlotClick(4, 3)" ondrop="handleDrop(event, 4, 3)" ondragover="allowDrop(event)" id="slot-4-3">빈 슬롯</div>
         </div>
       </div>
-      <button class="btn-finish" style="background:#f59e0b;" onclick="finishGame(4)">게임 완료 및 +1게임 적용</button>
+      <button class="btn-finish" style="background:#f59e0b;" onclick="moveToEmptyCourt(4)">비어있는 코트로 보내기</button>
     </div>
   </div>
 
@@ -492,7 +530,7 @@
   <div class="member-list" id="member-list"></div>
 
   <!-- 회원 선택 팝업 모달 -->
-  <div class="modal-overlay" id="member-select-modal">
+  <div class="modal-overlay" id="member-select-modal" onclick="if(event.target===this) closeModal()">
     <div class="modal-card">
       <div class="modal-header">
         <span>회원 선택 (게임 적은 순)</span>
@@ -527,6 +565,12 @@
       3: [null, null, null, null],
       4: [null, null, null, null]
     };
+    let courtEnabled = {
+      1: true,
+      2: true,
+      3: true,
+      4: true
+    };
 
     let selectedMemberId = null;
     let targetCourtNo = null;
@@ -536,6 +580,7 @@
       db.ref('syncData').set({
         members: members,
         courtState: courtState,
+        courtEnabled: courtEnabled,
         updatedAt: firebase.database.ServerValue.TIMESTAMP
       });
     }
@@ -550,6 +595,14 @@
           3: (data.courtState && data.courtState[3]) ? data.courtState[3] : [null, null, null, null],
           4: (data.courtState && data.courtState[4]) ? data.courtState[4] : [null, null, null, null]
         };
+        if (data.courtEnabled) {
+          courtEnabled = {
+            1: true,
+            2: true,
+            3: data.courtEnabled[3] !== undefined ? data.courtEnabled[3] : true,
+            4: data.courtEnabled[4] !== undefined ? data.courtEnabled[4] : true
+          };
+        }
       } else {
         members = [];
         courtState = {
@@ -558,6 +611,7 @@
           3: [null, null, null, null],
           4: [null, null, null, null]
         };
+        courtEnabled = { 1: true, 2: true, 3: true, 4: true };
       }
       render();
     }, (error) => {
@@ -582,7 +636,7 @@
       listEl.innerHTML = '';
 
       if (members.length === 0) {
-        listEl.innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:20px; font-size:0.85rem;">등록된 회원이 없습니다. 상단에서 회원을 추가해 주세요.</div>';
+        listEl.innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:20px; font-size:0.85rem; grid-column: 1 / -1;">등록된 회원이 없습니다. 상단에서 회원을 추가해 주세요.</div>';
         return;
       }
 
@@ -592,6 +646,7 @@
         const card = document.createElement('div');
         const isSelected = String(selectedMemberId) === String(m.id);
         const genderClass = `gender-${m.gender}`;
+        const inGame = isMemberAssigned(m.id); // 코트 들어가 있는지 여부 확인
         
         card.className = `member-card ${m.status} ${genderClass} ${isSelected ? 'selected-member' : ''}`;
         
@@ -607,6 +662,7 @@
             <span class="name">${m.name}</span>
             <span class="gender ${m.gender === '남' ? 'gender-남-text' : 'gender-여-text'}">(${m.gender})</span>
             <span class="badge grade-${m.grade}">${m.grade}</span>
+            ${inGame ? '<span class="badge badge-ingame">🏸 게임중</span>' : ''}
           </div>
 
           <div class="member-controls" onclick="event.stopPropagation()">
@@ -630,6 +686,28 @@
 
     function renderCourts() {
       [1, 2, 3, 4].forEach(courtNo => {
+        const courtCard = document.getElementById(`court-card-${courtNo}`);
+        const isEnabled = courtEnabled[courtNo];
+
+        if (courtCard) {
+          if (!isEnabled) {
+            courtCard.classList.add('disabled-court');
+          } else {
+            courtCard.classList.remove('disabled-court');
+          }
+        }
+
+        const toggleBtn = document.getElementById(`btn-toggle-${courtNo}`);
+        if (toggleBtn) {
+          if (isEnabled) {
+            toggleBtn.className = 'btn-court-toggle active';
+            toggleBtn.innerText = '활성화 (ON)';
+          } else {
+            toggleBtn.className = 'btn-court-toggle disabled';
+            toggleBtn.innerText = '비활성화 (OFF)';
+          }
+        }
+
         courtState[courtNo].forEach((memberId, slotIndex) => {
           const slotEl = document.getElementById(`slot-${courtNo}-${slotIndex}`);
           if (!slotEl) return;
@@ -644,10 +722,19 @@
             `;
           } else {
             slotEl.className = 'slot';
-            slotEl.innerText = '빈 슬롯';
+            slotEl.innerText = isEnabled ? '빈 슬롯' : '사용 불가';
           }
         });
       });
+    }
+
+    function toggleCourt(courtNo) {
+      courtEnabled[courtNo] = !courtEnabled[courtNo];
+      if (!courtEnabled[courtNo]) {
+        courtState[courtNo] = [null, null, null, null];
+      }
+      render();
+      pushToFirebase();
     }
 
     function selectMember(id) {
@@ -662,8 +749,12 @@
       render();
     }
 
-    /* 슬롯 클릭 처리 (사전 선택 인원 없을 경우 모달 창 오픈) */
     function handleSlotClick(courtNo, slotIndex) {
+      if (!courtEnabled[courtNo]) {
+        alert('비활성화된 코트입니다. 헤더의 토글 버튼을 눌러 활성화해주세요.');
+        return;
+      }
+
       if (selectedMemberId) {
         assignToSlot(courtNo, slotIndex);
       } else {
@@ -683,7 +774,6 @@
       pushToFirebase();
     }
 
-    /* 회원의 현재 코트 배정 여부 확인 */
     function isMemberAssigned(memberId) {
       for (let c = 1; c <= 4; c++) {
         if (courtState[c].some(id => String(id) === String(memberId))) {
@@ -693,7 +783,6 @@
       return false;
     }
 
-    /* 빈 슬롯 클릭 시 회원 선택 모달 창 생성 및 띄우기 */
     function openMemberModal(courtNo, slotIndex) {
       targetCourtNo = courtNo;
       targetSlotIndex = slotIndex;
@@ -701,7 +790,6 @@
       const modalList = document.getElementById('modal-member-list');
       modalList.innerHTML = '';
 
-      // 참여(play) 상태이며 코트에 배정되지 않은 회원을 게임 수 적은 순으로 정렬
       const availableMembers = members
         .filter(m => m.status === 'play' && !isMemberAssigned(m.id))
         .sort((a, b) => a.games - b.games);
@@ -720,7 +808,7 @@
               <span class="gender ${m.gender === '남' ? 'gender-남-text' : 'gender-여-text'}">(${m.gender})</span>
               <span class="badge grade-${m.grade}">${m.grade}</span>
             </div>
-            <div style="font-weight:700; color:var(--primary); font-size:0.85rem;">${m.games}게임 진행 중</div>
+            <div style="font-weight:700; color:var(--primary); font-size:0.85rem; white-space:nowrap;">${m.games}게임 진행 중</div>
           `;
           modalList.appendChild(item);
         });
@@ -755,6 +843,8 @@
 
     function handleDrop(e, courtNo, slotIndex) {
       e.preventDefault();
+      if (!courtEnabled[courtNo]) return;
+
       const rawId = e.dataTransfer.getData('text/plain');
       const member = members.find(m => String(m.id) === String(rawId));
       if (!member || member.status === 'off') return;
@@ -835,6 +925,8 @@
     }
 
     function finishGame(courtNo) {
+      if (!courtEnabled[courtNo]) return;
+
       const activePlayerIds = courtState[courtNo].filter(id => id !== null);
       if (activePlayerIds.length === 0) {
         alert('코트에 배정된 인원이 없습니다.');
@@ -853,7 +945,40 @@
       }
     }
 
-    /* 성별 점수 환산 로직 (여 D == 남 E) */
+    /* 대기 코트에서 비어있는 진행 코트(1, 2번 코트)로 배정 인원 이동 */
+    function moveToEmptyCourt(fromCourtNo) {
+      if (!courtEnabled[fromCourtNo]) return;
+
+      // 대기 코트에 배치된 인원이 있는지 확인
+      const hasPlayers = courtState[fromCourtNo].some(id => id !== null);
+      if (!hasPlayers) {
+        alert('대기 코트에 배정된 인원이 없습니다.');
+        return;
+      }
+
+      // 비어있는 진행 코트(1, 2번) 탐색
+      let targetCourt = null;
+      for (let c = 1; c <= 2; c++) {
+        if (courtEnabled[c] && courtState[c].every(slot => slot === null)) {
+          targetCourt = c;
+          break;
+        }
+      }
+
+      if (!targetCourt) {
+        alert('비어있는 진행 코트(1, 2번 코트)가 없습니다.');
+        return;
+      }
+
+      // 대기 코트의 인원을 슬롯 배치 그대로 진행 코트로 이동
+      courtState[targetCourt] = [...courtState[fromCourtNo]];
+      courtState[fromCourtNo] = [null, null, null, null];
+
+      render();
+      pushToFirebase();
+    }
+
+    /* 성별 점수 환산 (여 D == 남 E) */
     function getSkillValue(member) {
       const maleScore = { 'A': 5, 'B': 4, 'C': 3, 'D': 2, 'E': 1 };
       const femaleScore = { 'A': 4, 'B': 3, 'C': 2, 'D': 1, 'E': 0 };
@@ -865,7 +990,7 @@
       }
     }
 
-    /* 4명의 플레이어를 실력이 최대한 균등하게 2:2 팀으로 분배 */
+    /* 4명의 팀 밸런스를 2:2로 가장 균등하게 조정 */
     function getBalancedTeams(fourPlayers) {
       const p = fourPlayers;
       const s = p.map(getSkillValue);
@@ -881,9 +1006,22 @@
       return [p[0], p[3], p[1], p[2]];
     }
 
-    /* 자동 매칭 시스템 */
+    /* 앞 번호부터 빈 코트 1개씩 순차 매칭 */
     function autoMatch() {
-      // 1. 코트에 배치되어 있지 않고 '참여' 상태인 회원 추출
+      // 활성화되어 있고 완전히 비어 있는 코트 중 가장 앞번호 코트 1개 찾기
+      let targetCourt = null;
+      for (let c = 1; c <= 4; c++) {
+        if (courtEnabled[c] && courtState[c].every(slot => slot === null)) {
+          targetCourt = c;
+          break;
+        }
+      }
+
+      if (!targetCourt) {
+        alert('자동 매칭할 수 있는 빈 코트(활성화된 코트)가 없습니다.');
+        return;
+      }
+
       let candidates = members.filter(m => m.status === 'play' && !isMemberAssigned(m.id));
 
       if (candidates.length < 4) {
@@ -891,37 +1029,30 @@
         return;
       }
 
-      let filledCourtsCount = 0;
+      // 1. 순수 실력 점수 순 정렬
+      candidates.sort((a, b) => getSkillValue(a) - getSkillValue(b));
 
-      // 코트 1부터 4까지 비어있는 코트에 매칭 진행
-      [1, 2, 3, 4].forEach(courtNo => {
-        const isEmptyCourt = courtState[courtNo].every(slot => slot === null);
+      // 2. 4명 간 실력 갭 최소화 그룹 검색
+      let minSkillGap = Infinity;
+      let bestGroupIndex = 0;
 
-        if (isEmptyCourt && candidates.length >= 4) {
-          // 게임 참가 횟수가 적은 사람 우선 순선 정렬 (게임 수 동률 시 실력 점수순 정렬)
-          candidates.sort((a, b) => {
-            if (a.games !== b.games) return a.games - b.games;
-            return getSkillValue(b) - getSkillValue(a);
-          });
-
-          // 상위 4명 추출
-          const selected = candidates.splice(0, 4);
-
-          // 2:2 팀 벨런스 조정 (남/여 실력 차 보정 적용)
-          const balanced = getBalancedTeams(selected);
-
-          courtState[courtNo] = [balanced[0].id, balanced[1].id, balanced[2].id, balanced[3].id];
-          filledCourtsCount++;
+      for (let i = 0; i <= candidates.length - 4; i++) {
+        let skillGap = getSkillValue(candidates[i + 3]) - getSkillValue(candidates[i]);
+        if (skillGap < minSkillGap) {
+          minSkillGap = skillGap;
+          bestGroupIndex = i;
         }
-      });
-
-      if (filledCourtsCount > 0) {
-        render();
-        pushToFirebase();
-        alert(`${filledCourtsCount}개 코트에 자동 매칭이 완료되었습니다.`);
-      } else {
-        alert('완전히 비어있는 코트가 없거나 대기 인원이 부족합니다.');
       }
+
+      // 3. 4명 선출 및 2:2 밸런싱
+      const selected = candidates.splice(bestGroupIndex, 4);
+      const balanced = getBalancedTeams(selected);
+
+      courtState[targetCourt] = [balanced[0].id, balanced[1].id, balanced[2].id, balanced[3].id];
+
+      render();
+      pushToFirebase();
+      alert(`${targetCourt}코트에 실력 맞춤 자동 매칭이 완료되었습니다.`);
     }
 
     function resetData() {
@@ -933,6 +1064,7 @@
           3: [null, null, null, null],
           4: [null, null, null, null]
         };
+        courtEnabled = { 1: true, 2: true, 3: true, 4: true };
         selectedMemberId = null;
         render();
         pushToFirebase();
