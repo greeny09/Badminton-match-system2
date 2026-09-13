@@ -2,17 +2,17 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>하이클리어 배드민턴 소모임 스마트 매칭 현황판</title>
   <style>
     :root {
-      --bg-color: #f0f5fa;
+      --bg-color: #f4f7fa;
       --card-bg: #ffffff;
       --primary: #2563eb;
       --primary-hover: #1d4ed8;
       --danger: #ef4444;
       --danger-hover: #dc2626;
-      --text-main: #1e293b;
+      --text-main: #0f172a;
       --text-sub: #64748b;
       
       /* 급수 색상 */
@@ -23,122 +23,247 @@
       --grade-e: #8b5cf6;
 
       /* 성별 파스텔톤 색상 */
-      --male-bg: #eff6ff;
+      --male-bg: #f0f6ff;
       --male-border: #93c5fd;
       --female-bg: #fff1f2;
       --female-border: #fca5a5;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', system-ui, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-main); padding: 16px; max-width: 800px; margin: 0 auto; }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Pretendard', system-ui, -apple-system, sans-serif; 
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body { 
+      background-color: var(--bg-color); 
+      color: var(--text-main); 
+      padding: 12px; 
+      max-width: 600px; 
+      margin: 0 auto; 
+    }
 
     /* 메인 배너 영역 */
     .club-banner {
       width: 100%;
       background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.06);
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      text-align: center;
       border: 1px solid #bfdbfe;
     }
 
     .banner-img {
       max-width: 100%;
       height: auto;
-      max-height: 180px;
-      border-radius: 12px;
+      max-height: 140px;
+      border-radius: 10px;
       object-fit: contain;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     }
 
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #cbd5e1; }
-    h1 { font-size: 1.25rem; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 6px; }
+    /* 헤더 영역 (LIVE 삭제) */
+    header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 14px; 
+      padding: 4px 2px 10px 2px;
+      border-bottom: 2px solid #e2e8f0; 
+    }
 
-    .header-actions { display: flex; align-items: center; gap: 10px; }
-    .live-badge { font-size: 0.85rem; color: var(--primary); font-weight: bold; background: #dbeafe; padding: 3px 8px; border-radius: 12px; }
-    .btn-reset { padding: 6px 12px; background: var(--danger); color: white; border: none; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-    .btn-reset:hover { background: var(--danger-hover); }
+    h1 { 
+      font-size: 1.15rem; 
+      font-weight: 800; 
+      color: #1e3a8a; 
+      letter-spacing: -0.5px;
+    }
 
-    .summary-bar { display: flex; justify-content: space-around; font-size: 0.85rem; color: var(--text-sub); background: var(--card-bg); padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-    .summary-bar b { color: var(--primary); }
+    .header-actions { display: flex; align-items: center; }
+    .btn-reset { 
+      padding: 8px 12px; 
+      background: #fee2e2; 
+      color: var(--danger); 
+      border: 1px solid #fca5a5; 
+      border-radius: 8px; 
+      font-size: 0.78rem; 
+      font-weight: 700; 
+      cursor: pointer; 
+      transition: all 0.2s; 
+    }
+    .btn-reset:active { background: #fca5a5; color: white; }
 
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .section-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; color: #1e3a8a; }
+    /* 요약 바 */
+    .summary-bar { 
+      display: grid; 
+      grid-template-columns: repeat(4, 1fr); 
+      gap: 4px; 
+      text-align: center;
+      font-size: 0.8rem; 
+      color: var(--text-sub); 
+      background: var(--card-bg); 
+      padding: 10px 8px; 
+      border-radius: 12px; 
+      margin-bottom: 16px; 
+      box-shadow: 0 1px 4px rgba(0,0,0,0.03); 
+      border: 1px solid #e2e8f0; 
+    }
+    .summary-item { display: flex; flex-direction: column; gap: 2px; }
+    .summary-item span { font-size: 0.72rem; }
+    .summary-item b { font-size: 1rem; color: var(--primary); }
 
-    /* 코트 영역 */
-    .court-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 20px; }
-    .court-card { background: var(--card-bg); border-radius: 12px; padding: 16px; border: 2px solid var(--primary); box-shadow: 0 2px 6px rgba(37, 99, 235, 0.08); }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .section-title { font-size: 1rem; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 4px; }
+
+    /* 코트 그리드 (모바일 1열 우선) */
+    .court-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .court-card { 
+      background: var(--card-bg); 
+      border-radius: 14px; 
+      padding: 12px; 
+      border: 2px solid var(--primary); 
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.06); 
+    }
     .court-card.waiting-court { border-color: #f59e0b; }
     
-    .court-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; color: var(--primary); }
+    .court-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 8px; 
+      font-weight: 800; 
+      font-size: 0.95rem;
+      color: var(--primary); 
+    }
     .waiting-court .court-header { color: #d97706; }
     
-    .court-slots { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; background: #f8fafc; padding: 10px; border-radius: 8px; }
-    .team-box { display: flex; flex-direction: column; gap: 8px; }
-    
-    /* 슬롯 기본 및 성별 테두리 설정 */
-    .slot { 
-      min-height: 42px; background: #fff; border: 1.5px dashed #cbd5e1; border-radius: 6px; 
-      display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #94a3b8;
-      cursor: pointer; transition: all 0.2s; padding: 4px 8px; white-space: nowrap;
+    .court-slots { 
+      display: grid; 
+      grid-template-columns: 1fr auto 1fr; 
+      gap: 6px; 
+      align-items: center; 
+      background: #f8fafc; 
+      padding: 8px; 
+      border-radius: 10px; 
     }
-    .slot.occupied { border-style: solid; color: var(--text-main); font-weight: 600; justify-content: space-between; }
+    .team-box { display: flex; flex-direction: column; gap: 6px; }
+    
+    /* 터치하기 편한 슬롯 디자인 */
+    .slot { 
+      min-height: 44px; 
+      background: #fff; 
+      border: 1.5px dashed #cbd5e1; 
+      border-radius: 8px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 0.8rem; 
+      color: #94a3b8;
+      cursor: pointer; 
+      transition: all 0.15s; 
+      padding: 6px 8px; 
+      word-break: break-all;
+    }
+    .slot.occupied { border-style: solid; color: var(--text-main); font-weight: 700; justify-content: space-between; }
     .slot.occupied.gender-남 { border: 2px solid var(--male-border) !important; background-color: var(--male-bg) !important; }
     .slot.occupied.gender-여 { border: 2px solid var(--female-border) !important; background-color: var(--female-bg) !important; }
 
-    .vs { font-weight: 800; color: #94a3b8; font-size: 0.85rem; text-align: center; }
+    .vs { font-weight: 900; color: #cbd5e1; font-size: 0.8rem; text-align: center; }
 
-    .btn-finish { width: 100%; margin-top: 10px; padding: 8px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-    .btn-finish:hover { background: var(--primary-hover); }
+    .btn-finish { 
+      width: 100%; 
+      margin-top: 8px; 
+      min-height: 42px;
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      border-radius: 8px; 
+      font-size: 0.85rem;
+      font-weight: 700; 
+      cursor: pointer; 
+    }
+    .btn-finish:active { background: var(--primary-hover); }
 
-    /* 회원 명단 영역 */
+    /* 회원 추가 폼 모바일 개선 */
     .add-member-form { display: flex; gap: 6px; margin-bottom: 12px; }
-    .add-member-form input, .add-member-form select { padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; }
-    .add-member-form input[type="text"] { flex: 1; }
-    .btn-add { padding: 8px 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-    .btn-add:hover { background: var(--primary-hover); }
+    .add-member-form input, .add-member-form select { 
+      min-height: 42px;
+      padding: 0 10px; 
+      border: 1px solid #cbd5e1; 
+      border-radius: 8px; 
+      font-size: 16px; /* 모바일 자동 확대 방지 */
+      background: #fff;
+    }
+    .add-member-form input[type="text"] { flex: 1; min-width: 0; }
+    .btn-add { 
+      min-height: 42px;
+      padding: 0 14px; 
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      border-radius: 8px; 
+      font-weight: 700; 
+      font-size: 0.9rem;
+      cursor: pointer; 
+      white-space: nowrap;
+    }
 
+    /* 회원 목록 카드리스트 */
     .member-list { display: flex; flex-direction: column; gap: 8px; }
-    .member-card { background: var(--card-bg); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: grab; user-select: none; }
+    .member-card { 
+      background: var(--card-bg); 
+      border-radius: 12px; 
+      padding: 10px 12px; 
+      display: flex; 
+      flex-wrap: wrap;
+      justify-content: space-between; 
+      align-items: center; 
+      gap: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04); 
+      border: 1px solid #e2e8f0;
+      user-select: none; 
+    }
     
-    /* 명단 파스텔톤 구분 */
     .member-card.gender-남 { background-color: var(--male-bg); border-left: 5px solid var(--male-border); }
     .member-card.gender-여 { background-color: var(--female-bg); border-left: 5px solid var(--female-border); }
     .member-card.selected-member { border: 2px solid var(--primary) !important; background-color: #e0f2fe !important; }
-    .member-card.off { opacity: 0.4; cursor: not-allowed; }
-    .member-card.rest { background: #fffbebfb; }
+    .member-card.off { opacity: 0.45; }
+    .member-card.rest { background: #fffbeb; border-left-color: #f59e0b; }
 
-    .member-info { display: flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0; }
-    .name { font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
+    .member-info { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .name { font-weight: 800; font-size: 0.95rem; }
     .gender { font-size: 0.75rem; font-weight: bold; }
     .gender-남-text { color: #2563eb; }
     .gender-여-text { color: #dc2626; }
 
     /* 급수 배지 */
-    .badge { padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; color: white; white-space: nowrap; }
+    .badge { padding: 2px 6px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; color: white; }
     .grade-A { background-color: var(--grade-a); }
     .grade-B { background-color: var(--grade-b); }
     .grade-C { background-color: var(--grade-c); }
     .grade-D { background-color: var(--grade-d); }
     .grade-E { background-color: var(--grade-e); }
 
-    /* 게임 수 조절 영역 */
-    .game-cnt-box { display: flex; align-items: center; gap: 4px; background: #ffffff; padding: 2px 6px; border-radius: 6px; border: 1px solid #e2e8f0; }
-    .btn-cnt { border: none; background: #f1f5f9; width: 20px; height: 20px; border-radius: 4px; font-weight: bold; cursor: pointer; line-height: 1; }
-    .cnt-num { font-size: 0.8rem; font-weight: 700; color: #334155; min-width: 32px; text-align: center; white-space: nowrap; }
+    .member-controls { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+
+    /* 게임 수 컨트롤 */
+    .game-cnt-box { display: flex; align-items: center; gap: 2px; background: #ffffff; padding: 2px; border-radius: 6px; border: 1px solid #cbd5e1; }
+    .btn-cnt { border: none; background: #f1f5f9; width: 26px; height: 26px; border-radius: 4px; font-weight: 800; font-size: 0.9rem; cursor: pointer; color: #334155; }
+    .btn-cnt:active { background: #cbd5e1; }
+    .cnt-num { font-size: 0.8rem; font-weight: 800; color: #334155; min-width: 38px; text-align: center; }
 
     /* 상태 조절 토글 버튼 및 삭제 버튼 */
-    .status-group { display: flex; gap: 2px; background: #ffffff; padding: 2px; border-radius: 6px; border: 1px solid #e2e8f0; }
-    .status-btn { border: none; padding: 4px 8px; font-size: 0.7rem; font-weight: 600; border-radius: 4px; cursor: pointer; background: transparent; color: var(--text-sub); }
+    .status-group { display: flex; gap: 2px; background: #ffffff; padding: 2px; border-radius: 6px; border: 1px solid #cbd5e1; }
+    .status-btn { border: none; padding: 5px 8px; font-size: 0.72rem; font-weight: 700; border-radius: 4px; cursor: pointer; background: transparent; color: var(--text-sub); }
     .status-btn.active-play { background-color: var(--primary); color: white; }
     .status-btn.active-rest { background-color: #f59e0b; color: white; }
     .status-btn.active-off { background-color: #6b7280; color: white; }
-    .btn-delete-member { border: none; background: transparent; color: #ef4444; font-weight: bold; cursor: pointer; font-size: 0.85rem; padding: 0 4px; }
+    .btn-delete-member { border: none; background: transparent; color: #ef4444; font-weight: 800; cursor: pointer; font-size: 1rem; padding: 0 4px; margin-left: 2px; }
   </style>
 </head>
 <body>
@@ -148,31 +273,32 @@
     <img src="TalkMedia_i_8536f8c1c07a.png.png" alt="하이클리어 강동구 배드민턴 소모임" class="banner-img">
   </div>
 
+  <!-- 헤더 영역 (LIVE 삭제 적용) -->
   <header>
     <h1>🏸 하이클리어 매칭 현황판</h1>
     <div class="header-actions">
-      <span class="live-badge">● LIVE</span>
-      <button class="btn-reset" onclick="resetData()">🧹 전체 초기화</button>
+      <button class="btn-reset" onclick="resetData()">🧹 초기화</button>
     </div>
   </header>
 
+  <!-- 요약 바 -->
   <div class="summary-bar">
-    <div>전체 <b id="cnt-total">0</b>명</div> |
-    <div>참여 <b id="cnt-play">0</b>명</div> |
-    <div>휴식 <b id="cnt-rest">0</b>명</div> |
-    <div>퇴근 <b id="cnt-off">0</b>명</div>
+    <div class="summary-item"><span>전체</span><b id="cnt-total">0</b></div>
+    <div class="summary-item"><span>참여</span><b id="cnt-play">0</b></div>
+    <div class="summary-item"><span>휴식</span><b id="cnt-rest">0</b></div>
+    <div class="summary-item"><span>퇴근</span><b id="cnt-off">0</b></div>
   </div>
 
   <!-- 진행 코트 영역 -->
   <div class="section-title">🏟️ 진행 코트 현황</div>
-  <div style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 8px;">* 사람을 선택한 후 빈 코트 슬롯을 클릭하거나, 드래그하여 배치하세요.</div>
+  <div style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 8px;">* 사람을 선택한 후 빈 코트 슬롯을 터치하세요.</div>
   
   <div class="court-grid">
     <!-- 코트 1 -->
     <div class="court-card">
       <div class="court-header">
         <span>1 코트</span>
-        <span style="font-size:0.75rem; color:#6b7280;">진행 중</span>
+        <span style="font-size:0.75rem; color:#6b7280; font-weight: normal;">진행 중</span>
       </div>
       <div class="court-slots">
         <div class="team-box">
@@ -192,7 +318,7 @@
     <div class="court-card">
       <div class="court-header">
         <span>2 코트</span>
-        <span style="font-size:0.75rem; color:#6b7280;">진행 중</span>
+        <span style="font-size:0.75rem; color:#6b7280; font-weight: normal;">진행 중</span>
       </div>
       <div class="court-slots">
         <div class="team-box">
@@ -216,7 +342,7 @@
     <div class="court-card waiting-court">
       <div class="court-header">
         <span>3 코트 (대기 1)</span>
-        <span style="font-size:0.75rem; color:#d97706;">다음 대기</span>
+        <span style="font-size:0.75rem; color:#d97706; font-weight: normal;">다음 대기</span>
       </div>
       <div class="court-slots">
         <div class="team-box">
@@ -236,7 +362,7 @@
     <div class="court-card waiting-court">
       <div class="court-header">
         <span>4 코트 (대기 2)</span>
-        <span style="font-size:0.75rem; color:#d97706;">다음 대기</span>
+        <span style="font-size:0.75rem; color:#d97706; font-weight: normal;">다음 대기</span>
       </div>
       <div class="court-slots">
         <div class="team-box">
@@ -295,7 +421,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 상태 관리 (1, 2, 3, 4 코트 지원)
     let members = [];
     let courtState = {
       1: [null, null, null, null],
@@ -356,7 +481,7 @@
       listEl.innerHTML = '';
 
       if (members.length === 0) {
-        listEl.innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:20px; font-size:0.9rem;">등록된 회원이 없습니다. 상단에서 회원을 추가해 주세요.</div>';
+        listEl.innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:20px; font-size:0.85rem;">등록된 회원이 없습니다. 상단에서 회원을 추가해 주세요.</div>';
         return;
       }
 
@@ -381,10 +506,9 @@
             <span class="name">${m.name}</span>
             <span class="gender ${m.gender === '남' ? 'gender-남-text' : 'gender-여-text'}">(${m.gender})</span>
             <span class="badge grade-${m.grade}">${m.grade}</span>
-            <button class="btn-delete-member" onclick="event.stopPropagation(); deleteMember('${m.id}')" title="회원 삭제">✕</button>
           </div>
 
-          <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
+          <div class="member-controls" onclick="event.stopPropagation()">
             <div class="game-cnt-box">
               <button class="btn-cnt" onclick="changeGameCnt('${m.id}', -1)">-</button>
               <span class="cnt-num">${m.games}게임</span>
@@ -396,6 +520,7 @@
               <button class="status-btn ${m.status === 'rest' ? 'active-rest' : ''}" onclick="setStatus('${m.id}', 'rest')">휴식</button>
               <button class="status-btn ${m.status === 'off' ? 'active-off' : ''}" onclick="setStatus('${m.id}', 'off')">퇴근</button>
             </div>
+            <button class="btn-delete-member" onclick="event.stopPropagation(); deleteMember('${m.id}')" title="회원 삭제">✕</button>
           </div>
         `;
         listEl.appendChild(card);
@@ -413,8 +538,8 @@
             const genderClass = member.gender === '남' ? 'gender-남' : 'gender-여';
             slotEl.className = `slot occupied ${genderClass}`;
             slotEl.innerHTML = `
-              <span style="white-space:nowrap;">${member.name} <span class="badge grade-${member.grade}">${member.grade}</span></span>
-              <span style="color:#ef4444; cursor:pointer; font-size:12px; margin-left:4px;" onclick="event.stopPropagation(); removeFromSlot(${courtNo}, ${slotIndex})">✕</span>
+              <span>${member.name} <span class="badge grade-${member.grade}">${member.grade}</span></span>
+              <span style="color:#ef4444; cursor:pointer; font-size:14px; padding:2px 4px;" onclick="event.stopPropagation(); removeFromSlot(${courtNo}, ${slotIndex})">✕</span>
             `;
           } else {
             slotEl.className = 'slot';
