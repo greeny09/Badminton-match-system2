@@ -106,7 +106,7 @@
 
     .header-actions { display: flex; align-items: center; gap: 6px; }
     
-    /* 헤더 버튼 크기 축소 (글자 크기 유지, 여백 조절) */
+    /* 헤더 버튼 크기 축소 */
     .btn-automatch {
       padding: 4px 8px;
       background: #10b981;
@@ -217,7 +217,7 @@
       display: flex; 
       align-items: center; 
       justify-content: center; 
-      font-size: 0.8rem; 
+      font-size: 0.78rem; 
       color: #94a3b8;
       cursor: pointer; 
       transition: all 0.15s; 
@@ -653,7 +653,7 @@
         const card = document.createElement('div');
         const isSelected = String(selectedMemberId) === String(m.id);
         const genderClass = `gender-${m.gender}`;
-        const inGame = isMemberAssigned(m.id); // 코트 들어가 있는지 여부 확인
+        const inGame = isMemberAssigned(m.id);
         
         card.className = `member-card ${m.status} ${genderClass} ${isSelected ? 'selected-member' : ''}`;
         
@@ -695,6 +695,7 @@
       });
     }
 
+    /* 수정 1: 이름 급수 (게임수) 형식으로 슬롯 표시 */
     function renderCourts() {
       [1, 2, 3, 4].forEach(courtNo => {
         const courtCard = document.getElementById(`court-card-${courtNo}`);
@@ -728,7 +729,7 @@
             const genderClass = member.gender === '남' ? 'gender-남' : 'gender-여';
             slotEl.className = `slot occupied ${genderClass}`;
             slotEl.innerHTML = `
-              <span>${member.name} <span class="badge grade-${member.grade}">${member.grade}</span></span>
+              <span>${member.name} <span class="badge grade-${member.grade}">${member.grade}</span> (${member.games})</span>
               <span style="color:#ef4444; cursor:pointer; font-size:14px; padding:2px 4px;" onclick="event.stopPropagation(); removeFromSlot(${courtNo}, ${slotIndex})">✕</span>
             `;
           } else {
@@ -956,18 +957,15 @@
       }
     }
 
-    /* 대기 코트에서 비어있는 진행 코트(1, 2번 코트)로 배정 인원 이동 */
     function moveToEmptyCourt(fromCourtNo) {
       if (!courtEnabled[fromCourtNo]) return;
 
-      // 대기 코트에 배치된 인원이 있는지 확인
       const hasPlayers = courtState[fromCourtNo].some(id => id !== null);
       if (!hasPlayers) {
         alert('대기 코트에 배정된 인원이 없습니다.');
         return;
       }
 
-      // 비어있는 진행 코트(1, 2번) 탐색
       let targetCourt = null;
       for (let c = 1; c <= 2; c++) {
         if (courtEnabled[c] && courtState[c].every(slot => slot === null)) {
@@ -981,7 +979,6 @@
         return;
       }
 
-      // 대기 코트의 인원을 슬롯 배치 그대로 진행 코트로 이동
       courtState[targetCourt] = [...courtState[fromCourtNo]];
       courtState[fromCourtNo] = [null, null, null, null];
 
@@ -989,7 +986,7 @@
       pushToFirebase();
     }
 
-    /* 성별 점수 환산 (여 D == 남 E) */
+    /* 실력 점수 환산 */
     function getSkillValue(member) {
       const maleScore = { 'A': 5, 'B': 4, 'C': 3, 'D': 2, 'E': 1 };
       const femaleScore = { 'A': 4, 'B': 3, 'C': 2, 'D': 1, 'E': 0 };
@@ -1001,9 +998,30 @@
       }
     }
 
-    /* 4명의 팀 밸런스를 2:2로 가장 균등하게 조정 */
-    function getBalancedTeams(fourPlayers) {
-      const p = fourPlayers;
+    /* 수정 2: 종목 및 실력 팽팽하게 2:2 밸런싱 */
+    function balance4Players(four) {
+      const males = four.filter(m => m.gender === '남');
+      const females = four.filter(m => m.gender === '여');
+
+      // 혼합복식 (남2명, 여2명) -> 반드시 (남1+여1) vs (남2+여2) 조합으로 가장 균등하게 파트너 생성
+      if (males.length === 2 && females.length === 2) {
+        const m1 = males[0], m2 = males[1];
+        const w1 = females[0], w2 = females[1];
+
+        // 조합 1: (m1, w1) vs (m2, w2)
+        const diff1 = Math.abs((getSkillValue(m1) + getSkillValue(w1)) - (getSkillValue(m2) + getSkillValue(w2)));
+        // 조합 2: (m1, w2) vs (m2, w1)
+        const diff2 = Math.abs((getSkillValue(m1) + getSkillValue(w2)) - (getSkillValue(m2) + getSkillValue(w1)));
+
+        if (diff1 <= diff2) {
+          return [m1, w1, m2, w2];
+        } else {
+          return [m1, w2, m2, w1];
+        }
+      }
+
+      // 남자복식 (남4명) / 여자복식 (여4명) / 기타 -> 실력 합산 차이가 최사가 되는 조합으로 배치
+      const p = four;
       const s = p.map(getSkillValue);
 
       const diff1 = Math.abs((s[0] + s[1]) - (s[2] + s[3]));
@@ -1017,9 +1035,9 @@
       return [p[0], p[3], p[1], p[2]];
     }
 
-    /* 앞 번호부터 빈 코트 1개씩 순차 매칭 */
+    /* 수정 2: 자동 매칭 - 남복, 여복, 혼복 정규 종목을 최우선 구성 */
     function autoMatch() {
-      // 활성화되어 있고 완전히 비어 있는 코트 중 가장 앞번호 코트 1개 찾기
+      // 1. 활성화되어 있고 완전히 비어 있는 코트 중 가장 앞번호 코트 찾기
       let targetCourt = null;
       for (let c = 1; c <= 4; c++) {
         if (courtEnabled[c] && courtState[c].every(slot => slot === null)) {
@@ -1040,30 +1058,58 @@
         return;
       }
 
-      // 1. 순수 실력 점수 순 정렬
-      candidates.sort((a, b) => getSkillValue(a) - getSkillValue(b));
+      // 2. 게임 수 적은 순으로 정렬
+      candidates.sort((a, b) => a.games - b.games);
 
-      // 2. 4명 간 실력 갭 최소화 그룹 검색
-      let minSkillGap = Infinity;
-      let bestGroupIndex = 0;
+      // 3. 게임수 최소 상위 인원(최대 10명) 내에서 [남4, 여4, 남2여2] 정규 종목 조합 탐색
+      const poolSize = Math.min(candidates.length, 10);
+      const pool = candidates.slice(0, poolSize);
 
-      for (let i = 0; i <= candidates.length - 4; i++) {
-        let skillGap = getSkillValue(candidates[i + 3]) - getSkillValue(candidates[i]);
-        if (skillGap < minSkillGap) {
-          minSkillGap = skillGap;
-          bestGroupIndex = i;
+      let selectedFour = null;
+      let matchType = "";
+      let bestScore = Infinity;
+
+      for (let i = 0; i < pool.length - 3; i++) {
+        for (let j = i + 1; j < pool.length - 2; j++) {
+          for (let k = j + 1; k < pool.length - 1; k++) {
+            for (let l = k + 1; l < pool.length; l++) {
+              const group = [pool[i], pool[j], pool[k], pool[l]];
+              const mCnt = group.filter(m => m.gender === '남').length;
+              const fCnt = group.filter(m => m.gender === '여').length;
+
+              // 남복(남4), 여복(여4), 혼복(남2, 여2) 여부
+              const isStandard = (mCnt === 4 || fCnt === 4 || (mCnt === 2 && fCnt === 2));
+
+              // 게임 수 합계 + 비정규 종목 페널티(1000점)
+              const gameSum = group.reduce((sum, m) => sum + m.games, 0);
+              const score = gameSum + (isStandard ? 0 : 1000);
+
+              if (score < bestScore) {
+                bestScore = score;
+                selectedFour = group;
+                if (mCnt === 4) matchType = "남자복식";
+                else if (fCnt === 4) matchType = "여자복식";
+                else if (mCnt === 2 && fCnt === 2) matchType = "혼합복식";
+                else matchType = "복식";
+              }
+            }
+          }
         }
       }
 
-      // 3. 4명 선출 및 2:2 밸런싱
-      const selected = candidates.splice(bestGroupIndex, 4);
-      const balanced = getBalancedTeams(selected);
+      if (!selectedFour) {
+        selectedFour = candidates.slice(0, 4);
+        matchType = "복식";
+      }
+
+      // 4. 선택된 4명의 2:2 밸런싱 배정
+      const balanced = balance4Players(selectedFour);
 
       courtState[targetCourt] = [balanced[0].id, balanced[1].id, balanced[2].id, balanced[3].id];
 
       render();
       pushToFirebase();
-      alert(`${targetCourt}코트에 실력 맞춤 자동 매칭이 완료되었습니다.`);
+      alert(`${targetCourt}코트에 [${matchType}] 실력 맞춤 자동 매칭이 완료되었습니다.`);
     }
 
     function resetData() {
