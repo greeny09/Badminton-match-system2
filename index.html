@@ -3,30 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>하이클리어 배드민턴 소모임 스마트 매칭 현황판</title>
+  <title>하이클리어 배드민턴 스마트 매칭</title>
+  <!-- 깔끔한 프리텐다드 폰트 적용 -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
   <style>
     :root {
-      --bg-color: #f4f7fa;
+      /* 모던하고 깔끔한 컬러 팔레트 (토스/애플 스타일) */
+      --bg-color: #f2f4f6;
       --card-bg: #ffffff;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --danger: #ef4444;
-      --danger-hover: #dc2626;
-      --text-main: #0f172a;
-      --text-sub: #64748b;
+      --primary: #3182f6;      /* 맑고 세련된 블루 */
+      --primary-hover: #1b64da;
+      --danger: #ff3b30;
+      --text-main: #191f28;    /* 완전한 검은색보다 부드러운 다크 그레이 */
+      --text-sub: #8b95a1;
+      --border-light: #e5e8eb;
+      --surface-light: #f9fafb;
       
-      /* 급수 색상 */
-      --grade-a: #ef4444;
-      --grade-b: #2563eb;
-      --grade-c: #10b981;
-      --grade-d: #f59e0b;
+      /* 급수 색상 (파스텔 & 선명함의 조화) */
+      --grade-a: #ff3b30;
+      --grade-b: #3182f6;
+      --grade-c: #00c77a;
+      --grade-d: #ff9500;
       --grade-e: #8b5cf6;
 
-      /* 성별 파스텔톤 색상 */
+      /* 성별 색상 (아주 연하고 고급스러운 틴트) */
       --male-bg: #f0f6ff;
-      --male-border: #93c5fd;
-      --female-bg: #fff1f2;
-      --female-border: #fca5a5;
+      --male-text: #2b7af0;
+      --female-bg: #fff1f4;
+      --female-text: #f04452;
     }
 
     * { 
@@ -35,55 +39,49 @@
       padding: 0; 
       font-family: 'Pretendard', system-ui, -apple-system, sans-serif; 
       -webkit-tap-highlight-color: transparent;
-      word-break: keep-all; /* 모바일 한글 단어 끊김 방지 */
+      word-break: keep-all; 
     }
 
     body { 
       background-color: var(--bg-color); 
       color: var(--text-main); 
-      padding: 12px; 
+      padding: 16px 20px; 
       max-width: 600px; 
       margin: 0 auto; 
+      padding-bottom: 60px;
     }
 
-    /* 태블릿 가로모드 및 넓은 화면 대응 (코트 2*2 및 회원목록 2열 배치) */
     @media screen and (min-width: 768px) {
-      body {
-        max-width: 1000px;
-        padding: 20px;
-      }
-      .court-grid {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 14px !important;
-      }
-      .member-list {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 10px !important;
-      }
+      body { max-width: 1000px; padding: 24px 32px; }
+      .court-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 16px !important; }
+      .member-list { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+    }
+
+    /* 공통 카드 스타일 (부드러운 그림자와 둥근 모서리) */
+    .card-shadow {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0,0,0,0.01);
     }
 
     /* 메인 배너 영역 */
     .club-banner {
       width: 100%;
-      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 12px;
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.06);
+      border-radius: 24px;
+      margin-bottom: 24px;
       display: flex;
       justify-content: center;
       align-items: center;
-      border: 1px solid #bfdbfe;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(49, 130, 246, 0.06);
     }
-
     .banner-img {
-      max-width: 100%;
+      width: 100%;
       height: auto;
       max-height: 140px;
-      border-radius: 10px;
-      object-fit: contain;
+      object-fit: cover;
     }
 
     /* 헤더 영역 */
@@ -91,311 +89,260 @@
       display: flex; 
       justify-content: space-between; 
       align-items: center; 
-      margin-bottom: 14px; 
-      padding: 4px 2px 10px 2px;
-      border-bottom: 2px solid #e2e8f0; 
+      margin-bottom: 16px; 
+      padding: 4px 0;
     }
-
     h1 { 
-      font-size: 1.15rem; 
+      font-size: 1.3rem; 
       font-weight: 800; 
-      color: #1e3a8a; 
+      color: var(--text-main); 
       letter-spacing: -0.5px;
-      white-space: nowrap;
     }
-
-    .header-actions { display: flex; align-items: center; gap: 6px; }
+    .header-actions { display: flex; gap: 8px; }
     
-    /* 헤더 버튼 크기 축소 */
-    .btn-automatch {
-      padding: 4px 8px;
-      background: #10b981;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.78rem;
+    .btn {
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 0.85rem;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s;
+      border: none;
+      transition: transform 0.1s ease, opacity 0.2s;
     }
-    .btn-automatch:active { background: #059669; }
+    .btn:active { transform: scale(0.96); }
 
-    .btn-reset { 
-      padding: 4px 8px; 
-      background: #fee2e2; 
-      color: var(--danger); 
-      border: 1px solid #fca5a5; 
-      border-radius: 6px; 
-      font-size: 0.78rem; 
-      font-weight: 700; 
-      cursor: pointer; 
-      white-space: nowrap;
-      transition: all 0.2s; 
-    }
-    .btn-reset:active { background: #fca5a5; color: white; }
+    .btn-automatch { background: var(--text-main); color: white; }
+    .btn-reset { background: #e5e8eb; color: #505967; }
 
     /* 요약 바 */
     .summary-bar { 
-      display: grid; 
-      grid-template-columns: repeat(4, 1fr); 
-      gap: 4px; 
-      text-align: center;
-      font-size: 0.8rem; 
-      color: var(--text-sub); 
-      background: var(--card-bg); 
-      padding: 10px 8px; 
-      border-radius: 12px; 
-      margin-bottom: 16px; 
-      box-shadow: 0 1px 4px rgba(0,0,0,0.03); 
-      border: 1px solid #e2e8f0; 
+      display: flex; 
+      justify-content: space-between;
+      padding: 16px 20px; 
+      margin-bottom: 32px; 
     }
-    .summary-item { display: flex; flex-direction: column; gap: 2px; }
-    .summary-item span { font-size: 0.72rem; white-space: nowrap; }
-    .summary-item b { font-size: 1rem; color: var(--primary); }
+    .summary-item { display: flex; flex-direction: column; gap: 4px; align-items: center; width: 25%; }
+    .summary-item span { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; }
+    .summary-item b { font-size: 1.25rem; font-weight: 800; color: var(--text-main); }
+    .summary-item:first-child b { color: var(--primary); }
 
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .section-title { font-size: 1rem; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+    .section-title { 
+      font-size: 1.15rem; 
+      font-weight: 800; 
+      color: var(--text-main); 
+      margin-bottom: 12px; 
+      display: flex; 
+      align-items: center; 
+      gap: 6px; 
+    }
+    .section-subtitle { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 16px; font-weight: 500; }
 
-    /* 코트 그리드 */
-    .court-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    /* 코트 그리드 & 카드 */
+    .court-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
     .court-card { 
-      background: var(--card-bg); 
-      border-radius: 14px; 
-      padding: 12px; 
-      border: 2px solid var(--primary); 
-      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.06); 
-      transition: opacity 0.2s, background 0.2s;
+      padding: 20px; 
+      transition: opacity 0.2s;
     }
-    .court-card.waiting-court { border-color: #f59e0b; }
-    .court-card.disabled-court {
-      opacity: 0.55;
-      background: #f1f5f9;
-      border-color: #cbd5e1 !important;
-    }
+    .court-card.disabled-court { opacity: 0.4; pointer-events: none; }
     
     .court-header { 
       display: flex; 
       justify-content: space-between; 
       align-items: center; 
-      margin-bottom: 8px; 
-      font-weight: 800; 
-      font-size: 0.95rem;
-      color: var(--primary); 
+      margin-bottom: 16px; 
     }
-    .waiting-court .court-header { color: #d97706; }
+    .court-name { font-weight: 800; font-size: 1.05rem; color: var(--text-main); }
+    .court-status { font-size: 0.75rem; font-weight: 600; color: var(--primary); background: #e8f3ff; padding: 4px 10px; border-radius: 8px; }
+    .waiting-court .court-status { color: #d97706; background: #fffbe2; }
     
     .btn-court-toggle {
-      border: none;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      font-weight: 800;
-      cursor: pointer;
-      white-space: nowrap;
+      border: none; padding: 6px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer;
     }
-    .btn-court-toggle.active { background-color: #10b981; color: white; }
-    .btn-court-toggle.disabled { background-color: #64748b; color: white; }
+    .btn-court-toggle.active { background-color: var(--surface-light); color: var(--text-sub); }
+    .btn-court-toggle.disabled { background-color: #e5e8eb; color: #8b95a1; }
 
+    /* 슬롯 디자인 (Neumorphism 느낌의 깔끔한 내부 여백) */
     .court-slots { 
       display: grid; 
       grid-template-columns: 1fr auto 1fr; 
-      gap: 6px; 
+      gap: 12px; 
       align-items: center; 
-      background: #f8fafc; 
-      padding: 8px; 
-      border-radius: 10px; 
     }
-    .team-box { display: flex; flex-direction: column; gap: 6px; }
+    .team-box { display: flex; flex-direction: column; gap: 8px; }
     
-    /* 슬롯 디자인 */
     .slot { 
-      min-height: 44px; 
-      background: #fff; 
-      border: 1.5px dashed #cbd5e1; 
-      border-radius: 8px; 
+      min-height: 52px; 
+      background: var(--surface-light); 
+      border-radius: 12px; 
       display: flex; 
       align-items: center; 
       justify-content: center; 
-      font-size: 0.78rem; 
-      color: #94a3b8;
+      font-size: 0.85rem; 
+      font-weight: 600;
+      color: #a4a9b0;
       cursor: pointer; 
       transition: all 0.15s; 
-      padding: 6px 8px; 
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      padding: 8px 12px; 
     }
-    .slot:hover { background-color: #f1f5f9; }
-    .slot.occupied { border-style: solid; color: var(--text-main); font-weight: 700; justify-content: space-between; }
-    .slot.occupied.gender-남 { border: 2px solid var(--male-border) !important; background-color: var(--male-bg) !important; }
-    .slot.occupied.gender-여 { border: 2px solid var(--female-border) !important; background-color: var(--female-bg) !important; }
+    .slot:hover { background-color: #f0f2f5; }
+    .slot.occupied { 
+      background: #fff; 
+      color: var(--text-main); 
+      font-weight: 700; 
+      justify-content: space-between; 
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.03);
+    }
+    
+    /* 배치된 슬롯의 아주 미세한 성별 틴트 배경 */
+    .slot.occupied.gender-남 { background: var(--male-bg); }
+    .slot.occupied.gender-여 { background: var(--female-bg); }
 
-    .vs { font-weight: 900; color: #cbd5e1; font-size: 0.8rem; text-align: center; }
+    .vs { font-weight: 900; color: var(--border-light); font-size: 0.85rem; }
 
     .btn-finish { 
       width: 100%; 
-      margin-top: 8px; 
-      min-height: 42px;
+      margin-top: 16px; 
+      min-height: 48px;
       background: var(--primary); 
       color: white; 
       border: none; 
-      border-radius: 8px; 
-      font-size: 0.85rem;
+      border-radius: 12px; 
+      font-size: 0.95rem;
       font-weight: 700; 
       cursor: pointer; 
-      white-space: nowrap;
+      transition: transform 0.1s ease;
     }
-    .btn-finish:active { background: var(--primary-hover); }
+    .btn-finish:active { transform: scale(0.98); }
+    .btn-waiting-move { background: #333d4b; }
 
     /* 회원 추가 폼 */
-    .add-member-form { display: flex; gap: 6px; margin-bottom: 12px; }
+    .add-member-form { display: flex; gap: 8px; margin-bottom: 20px; }
     .add-member-form input, .add-member-form select { 
-      min-height: 42px;
-      padding: 0 10px; 
-      border: 1px solid #cbd5e1; 
-      border-radius: 8px; 
-      font-size: 16px; 
-      background: #fff;
+      min-height: 48px;
+      padding: 0 14px; 
+      border: none;
+      background: #e5e8eb;
+      border-radius: 12px; 
+      font-size: 0.95rem; 
+      font-weight: 600;
+      color: var(--text-main);
+      transition: background 0.2s;
+    }
+    .add-member-form input:focus, .add-member-form select:focus {
+      outline: none; background: #d3d6da;
     }
     .add-member-form input[type="text"] { flex: 1; min-width: 0; }
     .btn-add { 
-      min-height: 42px;
-      padding: 0 14px; 
+      min-height: 48px;
+      padding: 0 18px; 
       background: var(--primary); 
       color: white; 
       border: none; 
-      border-radius: 8px; 
+      border-radius: 12px; 
       font-weight: 700; 
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       cursor: pointer; 
-      white-space: nowrap;
     }
+    .btn-add:active { transform: scale(0.96); }
 
     /* 회원 목록 */
-    .member-list { display: flex; flex-direction: column; gap: 8px; }
+    .member-list { display: flex; flex-direction: column; gap: 10px; }
     .member-card { 
-      background: var(--card-bg); 
-      border-radius: 12px; 
-      padding: 10px 12px; 
+      padding: 16px; 
       display: flex; 
       flex-wrap: nowrap;
       justify-content: space-between; 
       align-items: center; 
-      gap: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04); 
-      border: 1px solid #e2e8f0;
-      user-select: none; 
+      gap: 12px;
+      transition: all 0.2s;
+      cursor: pointer;
     }
+    .member-card:active { transform: scale(0.98); }
     
-    .member-card.gender-남 { background-color: var(--male-bg); border-left: 5px solid var(--male-border); }
-    .member-card.gender-여 { background-color: var(--female-bg); border-left: 5px solid var(--female-border); }
-    .member-card.selected-member { border: 2px solid var(--primary) !important; background-color: #e0f2fe !important; }
-    .member-card.off { opacity: 0.45; }
-    .member-card.rest { background: #fffbeb; border-left-color: #f59e0b; }
+    .member-card.selected-member { 
+      box-shadow: 0 0 0 2px var(--primary); 
+      background: #f0f6ff; 
+    }
+    .member-card.off { opacity: 0.5; filter: grayscale(100%); }
+    .member-card.rest { background: #fafafa; opacity: 0.8; }
 
-    .member-info { display: flex; align-items: center; gap: 6px; flex-shrink: 0; white-space: nowrap; }
+    .member-info { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     
-    /* 이름 및 게임중 문구 세로 배치 스타일 */
-    .name-box { display: flex; flex-direction: column; justify-content: center; }
-    .name-row { display: flex; align-items: center; gap: 4px; }
-    .name { font-weight: 800; font-size: 0.95rem; }
-    .gender { font-size: 0.75rem; font-weight: bold; }
-    .gender-남-text { color: #2563eb; }
-    .gender-여-text { color: #dc2626; }
+    .name-box { display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+    .name-row { display: flex; align-items: center; gap: 6px; }
+    .name { font-weight: 800; font-size: 1rem; color: var(--text-main); }
     
-    .ingame-status { 
-      font-size: 0.68rem; 
-      color: #10b981; 
-      font-weight: 800; 
-      line-height: 1.1; 
-      margin-top: 2px; 
-    }
+    /* 성별 라벨 깔끔하게 */
+    .gender-label { font-size: 0.75rem; font-weight: 800; }
+    .gender-남-text { color: var(--male-text); }
+    .gender-여-text { color: var(--female-text); }
+    
+    .ingame-status { font-size: 0.7rem; color: var(--primary); font-weight: 700; }
 
     /* 급수 배지 */
-    .badge { padding: 2px 6px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; color: white; white-space: nowrap; }
+    .badge { padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; color: white; }
     .grade-A { background-color: var(--grade-a); }
     .grade-B { background-color: var(--grade-b); }
     .grade-C { background-color: var(--grade-c); }
     .grade-D { background-color: var(--grade-d); }
     .grade-E { background-color: var(--grade-e); }
 
-    .member-controls { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
+    /* 회원 컨트롤 UI (토스 세그먼트 컨트롤 느낌) */
+    .member-controls { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; }
 
-    /* 게임 수 컨트롤 */
-    .game-cnt-box { display: flex; align-items: center; gap: 2px; background: #ffffff; padding: 2px; border-radius: 6px; border: 1px solid #cbd5e1; }
-    .btn-cnt { border: none; background: #f1f5f9; width: 26px; height: 26px; border-radius: 4px; font-weight: 800; font-size: 0.9rem; cursor: pointer; color: #334155; }
-    .btn-cnt:active { background: #cbd5e1; }
-    .cnt-num { font-size: 0.8rem; font-weight: 800; color: #334155; min-width: 38px; text-align: center; white-space: nowrap; }
+    .control-group { 
+      display: flex; align-items: center; background: var(--bg-color); padding: 4px; border-radius: 10px; 
+    }
+    .btn-cnt { 
+      border: none; background: transparent; width: 28px; height: 28px; border-radius: 6px; 
+      font-weight: 800; font-size: 1rem; cursor: pointer; color: var(--text-sub); transition: 0.1s;
+    }
+    .btn-cnt:active { background: #e5e8eb; }
+    .cnt-num { font-size: 0.85rem; font-weight: 800; color: var(--text-main); width: 28px; text-align: center; }
 
-    /* 상태 버튼 */
-    .status-group { display: flex; gap: 2px; background: #ffffff; padding: 2px; border-radius: 6px; border: 1px solid #cbd5e1; }
-    .status-btn { border: none; padding: 5px 8px; font-size: 0.72rem; font-weight: 700; border-radius: 4px; cursor: pointer; background: transparent; color: var(--text-sub); white-space: nowrap; }
-    .status-btn.active-play { background-color: var(--primary); color: white; }
-    .status-btn.active-rest { background-color: #f59e0b; color: white; }
-    .status-btn.active-off { background-color: #6b7280; color: white; }
-    .btn-delete-member { border: none; background: transparent; color: #ef4444; font-weight: 800; cursor: pointer; font-size: 1rem; padding: 0 4px; margin-left: 2px; }
+    .status-btn { 
+      border: none; padding: 6px 10px; font-size: 0.75rem; font-weight: 700; border-radius: 8px; 
+      cursor: pointer; background: transparent; color: var(--text-sub); transition: 0.2s;
+    }
+    .status-btn.active-play { background-color: #fff; color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .status-btn.active-rest { background-color: #fff; color: #f59e0b; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .status-btn.active-off { background-color: #e5e8eb; color: var(--text-sub); }
+    
+    .btn-delete-member { 
+      border: none; background: transparent; color: #ff3b30; font-weight: 800; font-size: 1.1rem; 
+      padding: 4px; margin-left: 2px; cursor: pointer; opacity: 0.5; transition: 0.2s;
+    }
+    .btn-delete-member:hover { opacity: 1; }
 
-    /* 모달 팝업 */
+    /* 모달 팝업 (애플 바텀시트/다이얼로그 스타일) */
     .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.5);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.4); z-index: 1000; justify-content: center; align-items: center; padding: 20px;
+      backdrop-filter: blur(4px);
     }
     .modal-overlay.active { display: flex; }
     .modal-card {
-      background: #fff;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 440px;
-      max-height: 80vh;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-      overflow: hidden;
+      background: #fff; border-radius: 24px; width: 100%; max-width: 400px; max-height: 80vh;
+      display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.2); overflow: hidden;
+      animation: modalSlideUp 0.3s ease-out;
+    }
+    @keyframes modalSlideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
     .modal-header {
-      padding: 14px 16px;
-      border-bottom: 1px solid #e2e8f0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 800;
-      font-size: 1rem;
-      color: #1e3a8a;
-      white-space: nowrap;
+      padding: 20px; display: flex; justify-content: space-between; align-items: center;
+      font-weight: 800; font-size: 1.1rem; color: var(--text-main); border-bottom: 1px solid var(--bg-color);
     }
-    .modal-close {
-      font-size: 1.2rem;
-      color: #64748b;
-      cursor: pointer;
-      padding: 4px;
-    }
-    .modal-body {
-      padding: 12px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .modal-close { font-size: 1.2rem; color: var(--text-sub); cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--bg-color); border-radius: 50%; }
+    .modal-body { padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
     .modal-item {
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: 1px solid #e2e8f0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      transition: background 0.15s;
+      padding: 16px; border-radius: 16px; background: var(--surface-light);
+      display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.1s;
     }
-    .modal-item:hover { background-color: #f8fafc; }
-    .modal-item.gender-남 { background-color: var(--male-bg); border-left: 4px solid var(--male-border); }
-    .modal-item.gender-여 { background-color: var(--female-bg); border-left: 4px solid var(--female-border); }
+    .modal-item:active { transform: scale(0.98); background: #f0f2f5; }
   </style>
 </head>
 <body>
@@ -407,15 +354,15 @@
 
   <!-- 헤더 영역 -->
   <header>
-    <h1>🏸 하이클리어 매칭 현황판</h1>
+    <h1>🏸 매칭 현황판</h1>
     <div class="header-actions">
-      <button class="btn-automatch" onclick="autoMatch()">⚡ 자동 매칭</button>
-      <button class="btn-reset" onclick="resetData()">🧹 초기화</button>
+      <button class="btn btn-automatch" onclick="autoMatch()">자동 매칭</button>
+      <button class="btn btn-reset" onclick="resetData()">초기화</button>
     </div>
   </header>
 
   <!-- 요약 바 -->
-  <div class="summary-bar">
+  <div class="summary-bar card-shadow">
     <div class="summary-item"><span>전체</span><b id="cnt-total">0</b></div>
     <div class="summary-item"><span>참여</span><b id="cnt-play">0</b></div>
     <div class="summary-item"><span>휴식</span><b id="cnt-rest">0</b></div>
@@ -424,14 +371,14 @@
 
   <!-- 진행 코트 영역 -->
   <div class="section-title">🏟️ 진행 코트 현황</div>
-  <div style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 8px;">* 빈 슬롯을 터치하면 게임수가 적은 순으로 회원을 선택할 수 있습니다.</div>
+  <div class="section-subtitle">빈 슬롯을 터치하여 회원을 배정하세요.</div>
   
   <div class="court-grid">
     <!-- 코트 1 -->
-    <div class="court-card" id="court-card-1">
+    <div class="court-card card-shadow" id="court-card-1">
       <div class="court-header">
-        <span>1 코트</span>
-        <span style="font-size:0.75rem; color:#6b7280; font-weight: normal;">진행 중</span>
+        <span class="court-name">1 코트</span>
+        <span class="court-status">진행 중</span>
       </div>
       <div class="court-slots">
         <div class="team-box">
@@ -444,14 +391,14 @@
           <div class="slot" onclick="handleSlotClick(1, 3)" ondrop="handleDrop(event, 1, 3)" ondragover="allowDrop(event)" id="slot-1-3">빈 슬롯</div>
         </div>
       </div>
-      <button class="btn-finish" onclick="finishGame(1)">게임 완료 및 +1게임 적용</button>
+      <button class="btn-finish" onclick="finishGame(1)">게임 완료 (+1 반영)</button>
     </div>
 
     <!-- 코트 2 -->
-    <div class="court-card" id="court-card-2">
+    <div class="court-card card-shadow" id="court-card-2">
       <div class="court-header">
-        <span>2 코트</span>
-        <span style="font-size:0.75rem; color:#6b7280; font-weight: normal;">진행 중</span>
+        <span class="court-name">2 코트</span>
+        <span class="court-status">진행 중</span>
       </div>
       <div class="court-slots">
         <div class="team-box">
@@ -464,7 +411,7 @@
           <div class="slot" onclick="handleSlotClick(2, 3)" ondrop="handleDrop(event, 2, 3)" ondragover="allowDrop(event)" id="slot-2-3">빈 슬롯</div>
         </div>
       </div>
-      <button class="btn-finish" onclick="finishGame(2)">게임 완료 및 +1게임 적용</button>
+      <button class="btn-finish" onclick="finishGame(2)">게임 완료 (+1 반영)</button>
     </div>
   </div>
 
@@ -472,10 +419,10 @@
   <div class="section-title">⏳ 대기 코트 현황</div>
   <div class="court-grid">
     <!-- 코트 3 (대기 1) -->
-    <div class="court-card waiting-court" id="court-card-3">
+    <div class="court-card card-shadow waiting-court" id="court-card-3">
       <div class="court-header">
-        <span>3 코트 (대기 1)</span>
-        <button class="btn-court-toggle active" id="btn-toggle-3" onclick="toggleCourt(3)">활성화 (ON)</button>
+        <span class="court-name">3 코트 (대기 1)</span>
+        <button class="btn-court-toggle active" id="btn-toggle-3" onclick="toggleCourt(3)">ON</button>
       </div>
       <div class="court-slots">
         <div class="team-box">
@@ -488,14 +435,14 @@
           <div class="slot" onclick="handleSlotClick(3, 3)" ondrop="handleDrop(event, 3, 3)" ondragover="allowDrop(event)" id="slot-3-3">빈 슬롯</div>
         </div>
       </div>
-      <button class="btn-finish" style="background:#f59e0b;" onclick="moveToEmptyCourt(3)">비어있는 코트로 보내기</button>
+      <button class="btn-finish btn-waiting-move" onclick="moveToEmptyCourt(3)">빈 코트로 이동</button>
     </div>
 
     <!-- 코트 4 (대기 2) -->
-    <div class="court-card waiting-court" id="court-card-4">
+    <div class="court-card card-shadow waiting-court" id="court-card-4">
       <div class="court-header">
-        <span>4 코트 (대기 2)</span>
-        <button class="btn-court-toggle active" id="btn-toggle-4" onclick="toggleCourt(4)">활성화 (ON)</button>
+        <span class="court-name">4 코트 (대기 2)</span>
+        <button class="btn-court-toggle active" id="btn-toggle-4" onclick="toggleCourt(4)">ON</button>
       </div>
       <div class="court-slots">
         <div class="team-box">
@@ -508,15 +455,13 @@
           <div class="slot" onclick="handleSlotClick(4, 3)" ondrop="handleDrop(event, 4, 3)" ondragover="allowDrop(event)" id="slot-4-3">빈 슬롯</div>
         </div>
       </div>
-      <button class="btn-finish" style="background:#f59e0b;" onclick="moveToEmptyCourt(4)">비어있는 코트로 보내기</button>
+      <button class="btn-finish btn-waiting-move" onclick="moveToEmptyCourt(4)">빈 코트로 이동</button>
     </div>
   </div>
 
-  <!-- 회원 추가 폼 -->
-  <div class="section-header">
-    <div class="section-title">👥 출석 명단 및 상태 관리</div>
-  </div>
-
+  <!-- 출석 명단 영역 -->
+  <div class="section-title" style="margin-top: 10px;">👥 출석 명단</div>
+  
   <form class="add-member-form" onsubmit="addMember(event)">
     <input type="text" id="new-name" placeholder="이름 입력" required>
     <select id="new-gender">
@@ -530,13 +475,12 @@
       <option value="D">D급</option>
       <option value="E">E급</option>
     </select>
-    <button type="submit" class="btn-add">+ 추가</button>
+    <button type="submit" class="btn-add">추가</button>
   </form>
 
-  <!-- 회원 목록 -->
   <div class="member-list" id="member-list"></div>
 
-  <!-- 회원 선택 팝업 모달 -->
+  <!-- 모달 팝업 -->
   <div class="modal-overlay" id="member-select-modal" onclick="if(event.target===this) closeModal()">
     <div class="modal-card">
       <div class="modal-header">
@@ -551,7 +495,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <script>
-    // Firebase 초기화
     const firebaseConfig = {
       apiKey: "AIzaSyCj1JIxyp6ja9GjIMUsNeT9TLs3T_szl2c",
       authDomain: "highclear-gorhd.firebaseapp.com",
@@ -566,18 +509,8 @@
     const db = firebase.database();
 
     let members = [];
-    let courtState = {
-      1: [null, null, null, null],
-      2: [null, null, null, null],
-      3: [null, null, null, null],
-      4: [null, null, null, null]
-    };
-    let courtEnabled = {
-      1: true,
-      2: true,
-      3: true,
-      4: true
-    };
+    let courtState = { 1: [null, null, null, null], 2: [null, null, null, null], 3: [null, null, null, null], 4: [null, null, null, null] };
+    let courtEnabled = { 1: true, 2: true, 3: true, 4: true };
 
     let selectedMemberId = null;
     let targetCourtNo = null;
@@ -604,20 +537,14 @@
         };
         if (data.courtEnabled) {
           courtEnabled = {
-            1: true,
-            2: true,
+            1: true, 2: true,
             3: data.courtEnabled[3] !== undefined ? data.courtEnabled[3] : true,
             4: data.courtEnabled[4] !== undefined ? data.courtEnabled[4] : true
           };
         }
       } else {
         members = [];
-        courtState = {
-          1: [null, null, null, null],
-          2: [null, null, null, null],
-          3: [null, null, null, null],
-          4: [null, null, null, null]
-        };
+        courtState = { 1: [null, null, null, null], 2: [null, null, null, null], 3: [null, null, null, null], 4: [null, null, null, null] };
         courtEnabled = { 1: true, 2: true, 3: true, 4: true };
       }
       render();
@@ -643,7 +570,7 @@
       listEl.innerHTML = '';
 
       if (members.length === 0) {
-        listEl.innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:20px; font-size:0.85rem; grid-column: 1 / -1;">등록된 회원이 없습니다. 상단에서 회원을 추가해 주세요.</div>';
+        listEl.innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:40px 20px; font-size:0.9rem;">등록된 회원이 없습니다.</div>';
         return;
       }
 
@@ -652,16 +579,13 @@
       sortedMembers.forEach(m => {
         const card = document.createElement('div');
         const isSelected = String(selectedMemberId) === String(m.id);
-        const genderClass = `gender-${m.gender}`;
         const inGame = isMemberAssigned(m.id);
         
-        card.className = `member-card ${m.status} ${genderClass} ${isSelected ? 'selected-member' : ''}`;
-        
+        card.className = `member-card card-shadow ${m.status} ${isSelected ? 'selected-member' : ''}`;
         if (m.status !== 'off') {
           card.draggable = true;
           card.ondragstart = (e) => handleDragStart(e, m.id);
         }
-
         card.onclick = () => selectMember(m.id);
 
         card.innerHTML = `
@@ -669,54 +593,48 @@
             <div class="name-box">
               <div class="name-row">
                 <span class="name">${m.name}</span>
-                <span class="gender ${m.gender === '남' ? 'gender-남-text' : 'gender-여-text'}">(${m.gender})</span>
+                <span class="gender-label ${m.gender === '남' ? 'gender-남-text' : 'gender-여-text'}">${m.gender}</span>
                 <span class="badge grade-${m.grade}">${m.grade}</span>
               </div>
-              ${inGame ? '<span class="ingame-status">게임중</span>' : ''}
+              ${inGame ? '<span class="ingame-status">코트 배정됨</span>' : ''}
             </div>
           </div>
 
           <div class="member-controls" onclick="event.stopPropagation()">
-            <div class="game-cnt-box">
+            <div class="control-group">
               <button class="btn-cnt" onclick="changeGameCnt('${m.id}', -1)">-</button>
-              <span class="cnt-num">${m.games}게임</span>
+              <span class="cnt-num">${m.games}</span>
               <button class="btn-cnt" onclick="changeGameCnt('${m.id}', 1)">+</button>
             </div>
 
-            <div class="status-group">
+            <div class="control-group">
               <button class="status-btn ${m.status === 'play' ? 'active-play' : ''}" onclick="setStatus('${m.id}', 'play')">참여</button>
               <button class="status-btn ${m.status === 'rest' ? 'active-rest' : ''}" onclick="setStatus('${m.id}', 'rest')">휴식</button>
               <button class="status-btn ${m.status === 'off' ? 'active-off' : ''}" onclick="setStatus('${m.id}', 'off')">퇴근</button>
             </div>
-            <button class="btn-delete-member" onclick="event.stopPropagation(); deleteMember('${m.id}')" title="회원 삭제">✕</button>
+            <button class="btn-delete-member" onclick="event.stopPropagation(); deleteMember('${m.id}')">✕</button>
           </div>
         `;
         listEl.appendChild(card);
       });
     }
 
-    /* 수정 1: 이름 급수 (게임수) 형식으로 슬롯 표시 */
     function renderCourts() {
       [1, 2, 3, 4].forEach(courtNo => {
         const courtCard = document.getElementById(`court-card-${courtNo}`);
         const isEnabled = courtEnabled[courtNo];
 
         if (courtCard) {
-          if (!isEnabled) {
-            courtCard.classList.add('disabled-court');
-          } else {
-            courtCard.classList.remove('disabled-court');
-          }
+          if (!isEnabled) courtCard.classList.add('disabled-court');
+          else courtCard.classList.remove('disabled-court');
         }
 
         const toggleBtn = document.getElementById(`btn-toggle-${courtNo}`);
         if (toggleBtn) {
           if (isEnabled) {
-            toggleBtn.className = 'btn-court-toggle active';
-            toggleBtn.innerText = '활성화 (ON)';
+            toggleBtn.className = 'btn-court-toggle active'; toggleBtn.innerText = 'ON';
           } else {
-            toggleBtn.className = 'btn-court-toggle disabled';
-            toggleBtn.innerText = '비활성화 (OFF)';
+            toggleBtn.className = 'btn-court-toggle disabled'; toggleBtn.innerText = 'OFF';
           }
         }
 
@@ -730,7 +648,7 @@
             slotEl.className = `slot occupied ${genderClass}`;
             slotEl.innerHTML = `
               <span>${member.name} <span class="badge grade-${member.grade}">${member.grade}</span> (${member.games})</span>
-              <span style="color:#ef4444; cursor:pointer; font-size:14px; padding:2px 4px;" onclick="event.stopPropagation(); removeFromSlot(${courtNo}, ${slotIndex})">✕</span>
+              <span style="color:var(--text-sub); cursor:pointer; font-size:16px; padding:0 4px;" onclick="event.stopPropagation(); removeFromSlot(${courtNo}, ${slotIndex})">✕</span>
             `;
           } else {
             slotEl.className = 'slot';
@@ -742,55 +660,36 @@
 
     function toggleCourt(courtNo) {
       courtEnabled[courtNo] = !courtEnabled[courtNo];
-      if (!courtEnabled[courtNo]) {
-        courtState[courtNo] = [null, null, null, null];
-      }
-      render();
-      pushToFirebase();
+      if (!courtEnabled[courtNo]) courtState[courtNo] = [null, null, null, null];
+      render(); pushToFirebase();
     }
 
     function selectMember(id) {
       const member = members.find(m => String(m.id) === String(id));
       if (!member || member.status === 'off') return;
-
-      if (String(selectedMemberId) === String(id)) {
-        selectedMemberId = null;
-      } else {
-        selectedMemberId = id;
-      }
+      selectedMemberId = String(selectedMemberId) === String(id) ? null : id;
       render();
     }
 
     function handleSlotClick(courtNo, slotIndex) {
-      if (!courtEnabled[courtNo]) {
-        alert('비활성화된 코트입니다. 헤더의 토글 버튼을 눌러 활성화해주세요.');
-        return;
-      }
-
-      if (selectedMemberId) {
-        assignToSlot(courtNo, slotIndex);
-      } else {
-        openMemberModal(courtNo, slotIndex);
-      }
+      if (!courtEnabled[courtNo]) return alert('비활성화된 코트입니다.');
+      if (selectedMemberId) assignToSlot(courtNo, slotIndex);
+      else openMemberModal(courtNo, slotIndex);
     }
 
     function assignToSlot(courtNo, slotIndex) {
       if (!selectedMemberId) return;
       const member = members.find(m => String(m.id) === String(selectedMemberId));
       if (!member) return;
-
       removeMemberFromAllCourts(member.id);
       courtState[courtNo][slotIndex] = member.id;
       selectedMemberId = null;
-      render();
-      pushToFirebase();
+      render(); pushToFirebase();
     }
 
     function isMemberAssigned(memberId) {
       for (let c = 1; c <= 4; c++) {
-        if (courtState[c].some(id => String(id) === String(memberId))) {
-          return true;
-        }
+        if (courtState[c].some(id => String(id) === String(memberId))) return true;
       }
       return false;
     }
@@ -798,7 +697,6 @@
     function openMemberModal(courtNo, slotIndex) {
       targetCourtNo = courtNo;
       targetSlotIndex = slotIndex;
-
       const modalList = document.getElementById('modal-member-list');
       modalList.innerHTML = '';
 
@@ -807,25 +705,23 @@
         .sort((a, b) => a.games - b.games);
 
       if (availableMembers.length === 0) {
-        modalList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-sub); font-size:0.85rem;">대기 중인 참여 회원이 없습니다.</div>';
+        modalList.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-sub); font-size:0.9rem;">대기 중인 회원이 없습니다.</div>';
       } else {
         availableMembers.forEach(m => {
           const item = document.createElement('div');
-          item.className = `modal-item gender-${m.gender}`;
+          item.className = 'modal-item';
           item.onclick = () => selectMemberFromModal(m.id);
-
           item.innerHTML = `
-            <div class="member-info">
+            <div class="name-row">
               <span class="name">${m.name}</span>
-              <span class="gender ${m.gender === '남' ? 'gender-남-text' : 'gender-여-text'}">(${m.gender})</span>
+              <span class="gender-label ${m.gender === '남' ? 'gender-남-text' : 'gender-여-text'}">${m.gender}</span>
               <span class="badge grade-${m.grade}">${m.grade}</span>
             </div>
-            <div style="font-weight:700; color:var(--primary); font-size:0.85rem; white-space:nowrap;">${m.games}게임 진행 중</div>
+            <div style="font-weight:800; color:var(--primary); font-size:0.9rem;">${m.games}게임</div>
           `;
           modalList.appendChild(item);
         });
       }
-
       document.getElementById('member-select-modal').classList.add('active');
     }
 
@@ -833,38 +729,27 @@
       if (targetCourtNo !== null && targetSlotIndex !== null) {
         removeMemberFromAllCourts(memberId);
         courtState[targetCourtNo][targetSlotIndex] = memberId;
-        render();
-        pushToFirebase();
+        render(); pushToFirebase();
       }
       closeModal();
     }
 
     function closeModal() {
       document.getElementById('member-select-modal').classList.remove('active');
-      targetCourtNo = null;
-      targetSlotIndex = null;
+      targetCourtNo = null; targetSlotIndex = null;
     }
 
-    function handleDragStart(e, id) {
-      e.dataTransfer.setData('text/plain', String(id));
-    }
-
-    function allowDrop(e) {
-      e.preventDefault();
-    }
-
+    function handleDragStart(e, id) { e.dataTransfer.setData('text/plain', String(id)); }
+    function allowDrop(e) { e.preventDefault(); }
     function handleDrop(e, courtNo, slotIndex) {
       e.preventDefault();
       if (!courtEnabled[courtNo]) return;
-
       const rawId = e.dataTransfer.getData('text/plain');
       const member = members.find(m => String(m.id) === String(rawId));
       if (!member || member.status === 'off') return;
-
       removeMemberFromAllCourts(member.id);
       courtState[courtNo][slotIndex] = member.id;
-      render();
-      pushToFirebase();
+      render(); pushToFirebase();
     }
 
     function removeMemberFromAllCourts(memberId) {
@@ -877,28 +762,20 @@
 
     function removeFromSlot(courtNo, slotIndex) {
       courtState[courtNo][slotIndex] = null;
-      render();
-      pushToFirebase();
+      render(); pushToFirebase();
     }
 
     function changeGameCnt(id, delta) {
       const member = members.find(m => String(m.id) === String(id));
-      if (member) {
-        member.games = Math.max(0, member.games + delta);
-        render();
-        pushToFirebase();
-      }
+      if (member) { member.games = Math.max(0, member.games + delta); render(); pushToFirebase(); }
     }
 
     function setStatus(id, newStatus) {
       const member = members.find(m => String(m.id) === String(id));
       if (member) {
         member.status = newStatus;
-        if (newStatus === 'off') {
-          removeMemberFromAllCourts(id);
-        }
-        render();
-        pushToFirebase();
+        if (newStatus === 'off') removeMemberFromAllCourts(id);
+        render(); pushToFirebase();
       }
     }
 
@@ -907,23 +784,19 @@
       const nameInput = document.getElementById('new-name');
       const genderInput = document.getElementById('new-gender');
       const gradeInput = document.getElementById('new-grade');
-
       const name = nameInput.value.trim();
       if (!name) return;
 
-      const newMember = {
+      members.push({
         id: 'm_' + Date.now(),
         name: name,
         gender: genderInput.value,
         grade: gradeInput.value,
         games: 0,
         status: 'play'
-      };
-
-      members.push(newMember);
+      });
       nameInput.value = '';
-      render();
-      pushToFirebase();
+      render(); pushToFirebase();
     }
 
     function deleteMember(id) {
@@ -931,143 +804,84 @@
         removeMemberFromAllCourts(id);
         members = members.filter(m => String(m.id) !== String(id));
         if (String(selectedMemberId) === String(id)) selectedMemberId = null;
-        render();
-        pushToFirebase();
+        render(); pushToFirebase();
       }
     }
 
     function finishGame(courtNo) {
       if (!courtEnabled[courtNo]) return;
-
       const activePlayerIds = courtState[courtNo].filter(id => id !== null);
-      if (activePlayerIds.length === 0) {
-        alert('코트에 배정된 인원이 없습니다.');
-        return;
-      }
+      if (activePlayerIds.length === 0) return alert('코트에 배정된 인원이 없습니다.');
 
       if (confirm(`${courtNo}코트 게임을 종료하고 배정된 인원의 게임 수를 +1 증가시키겠습니까?`)) {
         activePlayerIds.forEach(id => {
           const member = members.find(m => String(m.id) === String(id));
           if (member) member.games += 1;
         });
-
         courtState[courtNo] = [null, null, null, null];
-        render();
-        pushToFirebase();
+        render(); pushToFirebase();
       }
     }
 
     function moveToEmptyCourt(fromCourtNo) {
       if (!courtEnabled[fromCourtNo]) return;
-
       const hasPlayers = courtState[fromCourtNo].some(id => id !== null);
-      if (!hasPlayers) {
-        alert('대기 코트에 배정된 인원이 없습니다.');
-        return;
-      }
+      if (!hasPlayers) return alert('대기 코트에 배정된 인원이 없습니다.');
 
       let targetCourt = null;
       for (let c = 1; c <= 2; c++) {
         if (courtEnabled[c] && courtState[c].every(slot => slot === null)) {
-          targetCourt = c;
-          break;
+          targetCourt = c; break;
         }
       }
-
-      if (!targetCourt) {
-        alert('비어있는 진행 코트(1, 2번 코트)가 없습니다.');
-        return;
-      }
+      if (!targetCourt) return alert('비어있는 진행 코트가 없습니다.');
 
       courtState[targetCourt] = [...courtState[fromCourtNo]];
       courtState[fromCourtNo] = [null, null, null, null];
-
-      render();
-      pushToFirebase();
+      render(); pushToFirebase();
     }
 
-    /* 실력 점수 환산 */
     function getSkillValue(member) {
       const maleScore = { 'A': 5, 'B': 4, 'C': 3, 'D': 2, 'E': 1 };
       const femaleScore = { 'A': 4, 'B': 3, 'C': 2, 'D': 1, 'E': 0 };
-
-      if (member.gender === '남') {
-        return maleScore[member.grade] || 1;
-      } else {
-        return femaleScore[member.grade] || 0;
-      }
+      return member.gender === '남' ? (maleScore[member.grade] || 1) : (femaleScore[member.grade] || 0);
     }
 
-    /* 수정 2: 종목 및 실력 팽팽하게 2:2 밸런싱 */
     function balance4Players(four) {
       const males = four.filter(m => m.gender === '남');
       const females = four.filter(m => m.gender === '여');
 
-      // 혼합복식 (남2명, 여2명) -> 반드시 (남1+여1) vs (남2+여2) 조합으로 가장 균등하게 파트너 생성
       if (males.length === 2 && females.length === 2) {
-        const m1 = males[0], m2 = males[1];
-        const w1 = females[0], w2 = females[1];
-
-        // 조합 1: (m1, w1) vs (m2, w2)
-        const diff1 = Math.abs((getSkillValue(m1) + getSkillValue(w1)) - (getSkillValue(m2) + getSkillValue(w2)));
-        // 조합 2: (m1, w2) vs (m2, w1)
-        const diff2 = Math.abs((getSkillValue(m1) + getSkillValue(w2)) - (getSkillValue(m2) + getSkillValue(w1)));
-
-        if (diff1 <= diff2) {
-          return [m1, w1, m2, w2];
-        } else {
-          return [m1, w2, m2, w1];
-        }
+        const diff1 = Math.abs((getSkillValue(males[0]) + getSkillValue(females[0])) - (getSkillValue(males[1]) + getSkillValue(females[1])));
+        const diff2 = Math.abs((getSkillValue(males[0]) + getSkillValue(females[1])) - (getSkillValue(males[1]) + getSkillValue(females[0])));
+        return diff1 <= diff2 ? [males[0], females[0], males[1], females[1]] : [males[0], females[1], males[1], females[0]];
       }
 
-      // 남자복식 (남4명) / 여자복식 (여4명) / 기타 -> 실력 합산 차이가 최사가 되는 조합으로 배치
-      const p = four;
-      const s = p.map(getSkillValue);
-
+      const s = four.map(getSkillValue);
       const diff1 = Math.abs((s[0] + s[1]) - (s[2] + s[3]));
       const diff2 = Math.abs((s[0] + s[2]) - (s[1] + s[3]));
       const diff3 = Math.abs((s[0] + s[3]) - (s[1] + s[2]));
-
       const minDiff = Math.min(diff1, diff2, diff3);
 
-      if (minDiff === diff1) return [p[0], p[1], p[2], p[3]];
-      if (minDiff === diff2) return [p[0], p[2], p[1], p[3]];
-      return [p[0], p[3], p[1], p[2]];
+      if (minDiff === diff1) return [four[0], four[1], four[2], four[3]];
+      if (minDiff === diff2) return [four[0], four[2], four[1], four[3]];
+      return [four[0], four[3], four[1], four[2]];
     }
 
-    /* 수정 2: 자동 매칭 - 남복, 여복, 혼복 정규 종목을 최우선 구성 */
     function autoMatch() {
-      // 1. 활성화되어 있고 완전히 비어 있는 코트 중 가장 앞번호 코트 찾기
       let targetCourt = null;
       for (let c = 1; c <= 4; c++) {
-        if (courtEnabled[c] && courtState[c].every(slot => slot === null)) {
-          targetCourt = c;
-          break;
-        }
+        if (courtEnabled[c] && courtState[c].every(slot => slot === null)) { targetCourt = c; break; }
       }
-
-      if (!targetCourt) {
-        alert('자동 매칭할 수 있는 빈 코트(활성화된 코트)가 없습니다.');
-        return;
-      }
+      if (!targetCourt) return alert('빈 코트가 없습니다.');
 
       let candidates = members.filter(m => m.status === 'play' && !isMemberAssigned(m.id));
+      if (candidates.length < 4) return alert('대기 중인 참여 회원이 최소 4명 이상이어야 합니다.');
 
-      if (candidates.length < 4) {
-        alert('자동 매칭을 수행하려면 대기 중인 참여 회원이 최소 4명 이상이어야 합니다.');
-        return;
-      }
-
-      // 2. 게임 수 적은 순으로 정렬
       candidates.sort((a, b) => a.games - b.games);
+      const pool = candidates.slice(0, Math.min(candidates.length, 10));
 
-      // 3. 게임수 최소 상위 인원(최대 10명) 내에서 [남4, 여4, 남2여2] 정규 종목 조합 탐색
-      const poolSize = Math.min(candidates.length, 10);
-      const pool = candidates.slice(0, poolSize);
-
-      let selectedFour = null;
-      let matchType = "";
-      let bestScore = Infinity;
+      let selectedFour = null, matchType = "", bestScore = Infinity;
 
       for (let i = 0; i < pool.length - 3; i++) {
         for (let j = i + 1; j < pool.length - 2; j++) {
@@ -1076,17 +890,11 @@
               const group = [pool[i], pool[j], pool[k], pool[l]];
               const mCnt = group.filter(m => m.gender === '남').length;
               const fCnt = group.filter(m => m.gender === '여').length;
-
-              // 남복(남4), 여복(여4), 혼복(남2, 여2) 여부
               const isStandard = (mCnt === 4 || fCnt === 4 || (mCnt === 2 && fCnt === 2));
-
-              // 게임 수 합계 + 비정규 종목 페널티(1000점)
-              const gameSum = group.reduce((sum, m) => sum + m.games, 0);
-              const score = gameSum + (isStandard ? 0 : 1000);
+              const score = group.reduce((sum, m) => sum + m.games, 0) + (isStandard ? 0 : 1000);
 
               if (score < bestScore) {
-                bestScore = score;
-                selectedFour = group;
+                bestScore = score; selectedFour = group;
                 if (mCnt === 4) matchType = "남자복식";
                 else if (fCnt === 4) matchType = "여자복식";
                 else if (mCnt === 2 && fCnt === 2) matchType = "혼합복식";
@@ -1097,34 +905,21 @@
         }
       }
 
-      if (!selectedFour) {
-        selectedFour = candidates.slice(0, 4);
-        matchType = "복식";
-      }
-
-      // 4. 선택된 4명의 2:2 밸런싱 배정
+      if (!selectedFour) { selectedFour = candidates.slice(0, 4); matchType = "복식"; }
+      
       const balanced = balance4Players(selectedFour);
-
       courtState[targetCourt] = [balanced[0].id, balanced[1].id, balanced[2].id, balanced[3].id];
-
-      render();
-      pushToFirebase();
-      alert(`${targetCourt}코트에 [${matchType}] 실력 맞춤 자동 매칭이 완료되었습니다.`);
+      render(); pushToFirebase();
+      alert(`${targetCourt}코트에 [${matchType}] 자동 매칭 완료!`);
     }
 
     function resetData() {
-      if (confirm('모든 출석 명단과 코트 현황을 초기화하시겠습니까?\n(Firebase 데이터도 함께 삭제됩니다)')) {
+      if (confirm('모든 데이터를 초기화하시겠습니까?')) {
         members = [];
-        courtState = {
-          1: [null, null, null, null],
-          2: [null, null, null, null],
-          3: [null, null, null, null],
-          4: [null, null, null, null]
-        };
+        courtState = { 1: [null, null, null, null], 2: [null, null, null, null], 3: [null, null, null, null], 4: [null, null, null, null] };
         courtEnabled = { 1: true, 2: true, 3: true, 4: true };
         selectedMemberId = null;
-        render();
-        pushToFirebase();
+        render(); pushToFirebase();
       }
     }
 
